@@ -1,0 +1,4 @@
+finish sound reaction
+Merge code
+schematic
+pcb and basic 3d model 
