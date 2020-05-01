@@ -6,7 +6,7 @@
 
 #define LOG_SEEK false
 #define LOG_EXEC false
-#define LOG_MODE true
+#define LOG_MODE false
 
 static const byte micPin = 0;
 static const byte ledPin = 5;
@@ -69,29 +69,35 @@ void loop() {
 
 void processAudio() {
   static int pwm = 0;
-  static int micRaw = 0; //raw
-  static int valc = 0;
+  static float micRaw = analogRead(micPin); //raw
+  static float valc = 0;
   static int samplec = 0; //sample counter
   static float LEDout = 0; //processed value for led
+  static int percent = 0;
   
   while (samplec < 100) {
-    micRaw = analogRead(micPin);
-    micRaw = (micRaw - 522);
+
+    
+   // micRaw = (micRaw - 522);
     valc = valc + micRaw;
     samplec++;
-    Serial.println(valc);
+    Serial.println(micRaw);
     delay(100);
   }
-  
-  LEDout = valc/100;
-  
-  //Serial.println("value");
-  Serial.println(LEDout);
-  
-  //Serial.println("RAW");
-  //Serial.println(micRaw);
-  
-  //Serial.print(out);
+
+//LEDout = (valc / 100);
+//percent = (LEDout * 1) + percent;
+
+
+Serial.println(percent);
+micRaw = analogRead(micPin);
+if (micRaw > 4) {
+  analogWrite(ledPin, 255);
+  delay(15);
+
+} else {
+  analogWrite(ledPin, 20);
+}
 }
 
 
