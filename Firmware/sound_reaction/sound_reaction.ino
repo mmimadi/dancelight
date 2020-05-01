@@ -1,17 +1,18 @@
 const int mic = 0; //pin 0
 const int led = 5; //pin 5
 int pwm = 0;
-int micRaw = 0; //raw
-int valc = 0;
+float micRaw = 0; //raw
+float valc = 0;
 int samplec = 0; //sample counter
 float  LEDout = 0; //processed value for led
+int percent = 0;
 
 void setup()
 
 {
   Serial.begin(9600);
   pinMode(led, OUTPUT);
-
+micRaw = analogRead(mic);
 }
 
 void loop()
@@ -19,21 +20,26 @@ void loop()
 
   while (samplec < 100) {
 
-    micRaw = analogRead(mic);
-    micRaw = (micRaw - 522);
+    
+   // micRaw = (micRaw - 522);
     valc = valc + micRaw;
     samplec++;
-    Serial.println(valc);
+    Serial.println(micRaw);
     delay(100);
   }
 
-LEDout = valc/100;
+//LEDout = (valc / 100);
+//percent = (LEDout * 1) + percent;
 
-//Serial.println("value");
-Serial.println(LEDout);
 
-//Serial.println("RAW");
-//Serial.println(micRaw);
+Serial.println(percent);
+micRaw = analogRead(mic);
+if (micRaw > 4) {
+  analogWrite(led, 255);
+  delay(15);
 
-  //Serial.print(out);
+} else {
+  analogWrite(led, 20);
+}
+
 }
