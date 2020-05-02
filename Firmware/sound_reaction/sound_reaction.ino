@@ -4,7 +4,7 @@ int micInputPin = 0;
 int ledPin = 5;
 int sampleCounter = 0;
 
-float micRawValue = 10;
+float micRawValue = 0;
 float percent = 100; //set sound threshold percentage
 float processedResult = 0;
 
@@ -51,7 +51,7 @@ void BumpIt() {
 
   } else {
 
-    analogWrite(ledPin, 20); //standbye brightness
+    analogWrite(ledPin, 5); //standbye brightness
   }
 }
 
