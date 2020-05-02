@@ -8,13 +8,15 @@
 #define LOG_EXEC false
 #define LOG_MODE false
 
-static const byte micPin = 0;
+static const byte micInputPin = 0;
 static const byte ledPin = 5;
 static const byte buttonPin = 6;
+float percent = 100; //set sound threshold percentage
 
 void setup() {
   Serial.begin(9600);
   pinMode(ledPin, OUTPUT);
+  percent = percent / 100;
   resetPreset();
 }
 
@@ -68,38 +70,65 @@ void loop() {
 //////////////////////////////////
 
 void processAudio() {
-  static int pwm = 0;
-  static float micRaw = analogRead(micPin); //raw
-  static float valc = 0;
-  static int samplec = 0; //sample counter
-  static float LEDout = 0; //processed value for led
-  static int percent = 0;
+
+int sampleCounter = 0;
+float micRawValue = analogRead(micInputPin);
+float processedResult = 0;
   
-  while (samplec < 100) {
+  while (sampleCounter < 100) {
 
-    
-   // micRaw = (micRaw - 522);
-    valc = valc + micRaw;
-    samplec++;
-    Serial.println(micRaw);
-    delay(100);
+    micRawValue = analogRead(micInputPin); //uncomment with actual mic attached
+    processedResult = processedResult + micRawValue;
+    delay(7);
+    Serial.println(micRawValue); //debug
+    sampleCounter++;
   }
+  ////////////////debug///////////////////
+  Serial.println("totaled");
+  Serial.println(processedResult);
+  delay(100);
+  ///////////////////////////////////////
 
-//LEDout = (valc / 100);
-//percent = (LEDout * 1) + percent;
+  processedResult = ((processedResult * percent) + processedResult) / sampleCounter;
 
+  ///////////////debug///////////////////
+  Serial.println("DB threshold");
+  Serial.println(processedResult);
+  //////////////////////////////////////
 
-Serial.println(percent);
-micRaw = analogRead(micPin);
-if (micRaw > 4) {
+  micRawValue = analogRead(micInputPin); 
+  pinMode(ledPin, OUTPUT);
+
+  if (micRawValue > processedResult) {
+    SoundFade();
+  } else {
+    analogWrite(ledPin, 20); //standbye brightness
+  }
+}
+
+void SoundFade() {
+  float micRawValue = analogRead(micInputPin); //why does this have to be here? micRawValue not declared?
+  micRawValue = analogRead(micInputPin);
   analogWrite(ledPin, 255);
-  delay(15);
-
-} else {
-  analogWrite(ledPin, 20);
+  delay(30);
+  analogWrite(ledPin, 210);
+  delay(10);
+  analogWrite(ledPin, 200);
+  delay(25);
+  micRawValue = analogRead(micInputPin);
+  analogWrite(ledPin, 190);
+  delay(25);
+  analogWrite(ledPin, 150);
+  delay(25);
+  micRawValue = analogRead(micInputPin);
+  analogWrite(ledPin, 110);
+  delay(25);
+  analogWrite(ledPin, 50);
+  delay(25);
+  analogWrite(ledPin, 5);
+  delay(100);
+  micRawValue = analogRead(micInputPin);
 }
-}
-
 
 /////////////////////////////
 //   DDR's Blinking Code   //

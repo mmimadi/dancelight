@@ -4,7 +4,7 @@ int micInputPin = 0;
 int ledPin = 5;
 int sampleCounter = 0;
 
-float micRawValue = 0;
+float micRawValue = 10;
 float percent = 100; //set sound threshold percentage
 float processedResult = 0;
 
@@ -52,7 +52,8 @@ void loop() {
 }
 
 void SoundFade() {
-
+  
+  micRawValue = analogRead(micInputPin);
   analogWrite(ledPin, 255);
   delay(30);
   analogWrite(ledPin, 210);
