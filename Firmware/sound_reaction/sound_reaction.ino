@@ -15,7 +15,7 @@ void setup() {
 
 void loop() {
 
-  while (sampleCounter < 100) {
+  while (sampleCounter < 1000) {
 
     micRawValue = analogRead(micInputPin); //uncomment with actual mic attached
     processedResult = processedResult + micRawValue;
@@ -24,20 +24,20 @@ void loop() {
     sampleCounter++;
   }
   ////////////////debug///////////////////
-  Serial.println("totaled");
-  Serial.println(processedResult);
-  delay(100);
+//  Serial.println("totaled");
+//  Serial.println(processedResult);
+ //delay(100);
   ///////////////////////////////////////
 
   processedResult = ((processedResult * percent) + processedResult) / sampleCounter;
 
   ///////////////debug///////////////////
-  Serial.println("DB threshold");
-  Serial.println(processedResult);
+ // Serial.println("DB threshold");
+  //Serial.println(processedResult);
   //////////////////////////////////////
 
   BumpIt(); //LETTSS GOOOOOOOO
-
+micRawValue = analogRead(micInputPin); //uncomment with actual mic attached
 }
 
 void BumpIt() {
