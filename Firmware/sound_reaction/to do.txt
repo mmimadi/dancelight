@@ -1,0 +1,3 @@
+tune the fade then pass to ddr to remove delay
+tune samples
+boost converter
