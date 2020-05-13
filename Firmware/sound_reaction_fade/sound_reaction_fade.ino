@@ -6,8 +6,8 @@ float sampleCounter = 0;
 float micRawValue = 0;
 float processedResult = 0;
 
-float percent = 10; //Set the % above the ambient sound to hit the light
-int samples = 10; //Set # samples to calculate ambient sound
+float percent = 1; //Set the % above the ambient sound to hit the light
+int samples = 20; //Set # samples to calculate ambient sound
 int grabSample = 0;
 int grabCounter = 0;
 unsigned int howBumpingIsIt = 0;
@@ -91,6 +91,7 @@ void BumpIt() {
     howBumpingIsIt = ITS_TOTALLY_LIT;
   }
 }
+
 void writeAndDelay(unsigned int brightness, unsigned int ms) {
   analogWrite(ledPin, brightness);
   delay(ms);

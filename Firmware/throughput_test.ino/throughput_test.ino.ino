@@ -21,47 +21,17 @@ void setup() {
 }
 
 void loop() {
-  //Monitor preset advancement button and run right preset.
-  static const byte numModes = 3;
-  static const unsigned long buttonPressConfirmationTimeMs = 50;
-  static byte mode = 1;
-  static bool pressed = true;
-  static bool lastProcessedPressed = false;
-  static unsigned long eventTimeMs = 0;
+  analogWrite(ledPin, 255);
+  analogWrite(ledPin, analogRead(micInputPin)/0xFF);
+  analogWrite(ledPin, 0);
+}
 
-  int buttonState = digitalRead(buttonPin);
-  if (buttonState == LOW) { // low means the D2 pin is pulled to ground aka connect D2 to GND on the arduino
-    if (!pressed) {
-      pressed = true;
-      eventTimeMs = millis() + buttonPressConfirmationTimeMs;
-    }
-  } else {
-    if (pressed) {
-      pressed = false;
-      eventTimeMs = millis() + buttonPressConfirmationTimeMs;
-    }
-  }
-
-  if (lastProcessedPressed != pressed && millis() >= eventTimeMs) {
-    lastProcessedPressed = pressed;
-    pressed && (mode = ++mode % numModes);
-  }
-
-  if (mode == 0) {
-    LOG_MODE && Serial.println("mode 0: solid");
-    analogWrite(ledPin, 255);
-  } else if (mode == 1) {
-    LOG_MODE && Serial.println("mode 1: react to sound");
-    processAudio();
-  } else if (mode == 2) {
-    LOG_MODE && Serial.println("mode 2: blink");
-    processPreset();
-  } else {
-    Serial.print("unknown mode: ");
-    Serial.println(mode);
-    delay(100); //flush the buffer
-    exit(5); //Invalid command. Ruh roh.
-  }
+void loop2() {
+  analogWrite(ledPin, int(analogRead(micInputPin)/1023.0*255));
+  //Serial.print(char(analogRead(micInputPin)/1023.0*255));
+  long intensity = ((analogRead(micInputPin)-210)/20.0*0xFFFF);
+  Serial.print((intensity&0xFF00)>>8);
+  Serial.print((intensity&0x00FF)>>0);
 }
 
 
