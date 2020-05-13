@@ -7,7 +7,7 @@ float micRawValue = 0;
 float processedResult = 0;
 
 float percent = 2; //Set the % above the ambient sound to hit the light
-int samples = 20; //Set # samples to calculate ambient sound
+int samples = 0; //Set # samples to calculate ambient sound
 
 int grabSample = 0;
 int grabCounter = 0;
@@ -28,7 +28,7 @@ void loop() {
     micRawValue = analogRead(micInputPin);
     processedResult = processedResult + micRawValue;
 
-    delay(0);
+    //delay(0);
     Serial.println(micRawValue); //debug
     sampleCounter++;
 
@@ -54,7 +54,7 @@ void loop() {
 
 grabCounter++;
 
-if (grabCounter == 50) {
+if (grabCounter == 25) {
 grabSample = analogRead(micInputPin);
 processedResult = (grabSample + processedResult) / 2;
 sampleCounter++;
