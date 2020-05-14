@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:Main Board-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -297,4 +298,107 @@ Connection ~ 2940 2820
 Wire Wire Line
 	2800 2620 2940 2620
 Connection ~ 2940 2620
+$Comp
+L Transistor_FET:CSD16342Q5A Q3
+U 1 1 5EBD05D1
+P 5340 2660
+F 0 "Q3" H 5130 2370 50  0000 L CNN
+F 1 "A0448" H 5130 2290 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:TDSON-8-1" H 5540 2585 50  0001 L CIN
+F 3 "http://www.ti.com/lit/gpn/csd16342q5a" V 5340 2660 50  0001 L CNN
+	1    5340 2660
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Battery_Cell BT1
+U 1 1 5EBF3FED
+P 4470 2710
+F 0 "BT1" H 4588 2806 50  0000 L CNN
+F 1 "3.8V" H 4588 2715 50  0000 L CNN
+F 2 "" V 4470 2770 50  0001 C CNN
+F 3 "~" V 4470 2770 50  0001 C CNN
+	1    4470 2710
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4470 2860 5440 2860
+Wire Wire Line
+	4470 2460 4750 2460
+$Comp
+L Device:D_ALT D1
+U 1 1 5EBE76EE
+P 5590 2460
+F 0 "D1" H 5590 2244 50  0000 C CNN
+F 1 "D_ALT" H 5590 2335 50  0000 C CNN
+F 2 "" H 5590 2460 50  0001 C CNN
+F 3 "~" H 5590 2460 50  0001 C CNN
+	1    5590 2460
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5050 2460 5440 2460
+$Comp
+L Device:L_Core_Iron L1
+U 1 1 5EBCB70E
+P 4900 2460
+F 0 "L1" V 4719 2460 50  0000 C CNN
+F 1 "L_Core_Iron" V 4810 2460 50  0000 C CNN
+F 2 "" H 4900 2460 50  0001 C CNN
+F 3 "~" H 4900 2460 50  0001 C CNN
+	1    4900 2460
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C_Small C5
+U 1 1 5EBEE2F7
+P 5810 2680
+F 0 "C5" H 5902 2726 50  0000 L CNN
+F 1 "C_Small" H 5902 2635 50  0000 L CNN
+F 2 "" H 5810 2680 50  0001 C CNN
+F 3 "~" H 5810 2680 50  0001 C CNN
+	1    5810 2680
+	1    0    0    -1  
+$EndComp
+Connection ~ 5440 2460
+Wire Wire Line
+	4470 2460 4470 2510
+Wire Wire Line
+	4470 2810 4470 2860
+Wire Wire Line
+	5440 2860 5810 2860
+Wire Wire Line
+	5810 2860 5810 2780
+Connection ~ 5440 2860
+Wire Wire Line
+	5740 2460 5810 2460
+Wire Wire Line
+	5810 2460 5810 2580
+Wire Wire Line
+	5810 2460 6480 2460
+Connection ~ 5810 2460
+Wire Wire Line
+	5810 2860 6480 2860
+Connection ~ 5810 2860
+$Comp
+L Connector:TestPoint TP1
+U 1 1 5EC32DDA
+P 6480 2460
+F 0 "TP1" V 6434 2648 50  0000 L CNN
+F 1 "12V+" V 6525 2648 50  0000 L CNN
+F 2 "" H 6680 2460 50  0001 C CNN
+F 3 "~" H 6680 2460 50  0001 C CNN
+	1    6480 2460
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint TP3
+U 1 1 5EC34CEF
+P 6480 2860
+F 0 "TP3" V 6434 3048 50  0000 L CNN
+F 1 "12V-" V 6525 3048 50  0000 L CNN
+F 2 "" H 6680 2860 50  0001 C CNN
+F 3 "~" H 6680 2860 50  0001 C CNN
+	1    6480 2860
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC
