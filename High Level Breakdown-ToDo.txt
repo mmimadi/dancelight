@@ -6,10 +6,6 @@ pcb and basic 3d model
 code rundown
 hardware rundown 
 
-second amp
-pass FW to david
-boost
-
 
 
 
