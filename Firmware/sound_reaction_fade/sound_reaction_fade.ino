@@ -43,7 +43,7 @@ void findBoundingPercentiles(
   static unsigned int sortedSamples[SAMPLE_LENGTH] = {0};
   memcpy(sortedSamples, samples, SAMPLE_LENGTH * sizeof(samples[0]));
   qsort(sortedSamples, SAMPLE_LENGTH, sizeof(samples[0]), 
-    [](unsigned int* a, unsigned int* b) { return &a < &b; });
+    [](unsigned int* a, unsigned int* b) { return &a - &b; });
   *min = sortedSamples[0];
   *lower = sortedSamples[SAMPLE_LENGTH/PERCENTILE_INVERSE];
   *middle = sortedSamples[SAMPLE_LENGTH/2];
