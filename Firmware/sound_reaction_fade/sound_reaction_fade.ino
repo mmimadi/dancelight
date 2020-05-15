@@ -1,15 +1,11 @@
-///////SEXY REVISION//////
-
 unsigned int micInputPin = 0;
 unsigned int ledPin = 5;
 float sampleCounter = 0;
 float micRawValue = 0;
 float processedResult = 0;
 
-float percent = 1; //Set the % above the ambient sound to hit the light
-int samples = 20; //Set # samples to calculate ambient sound
-int grabSample = 0;
-int grabCounter = 0;
+const float percent = 1; //Set the % above the ambient sound to hit the light
+float beat_sensitivity = 1.0; //Adjusted to try to stay within target bpm range.
 
 const int MODE_INSTANT = 0;
 const int MODE_FADE = 1;
@@ -18,95 +14,77 @@ const int MODE = MODE_INSTANT;
 unsigned int howBumpingIsIt = 0;
 const unsigned int ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
 
+#define SAMPLE_LENGTH 100
+unsigned int samples[SAMPLE_LENGTH] = {0};
+unsigned int last_sample_index = SAMPLE_LENGTH - 1; //We just filled the array with 0s, so point to the last zero. (Makes initial sample code start from 0 instead of 1, not that it matters.)
+
+//Add a sample to the buffer.
+void addSample(unsigned int sample) {
+  last_sample_index = ++last_sample_index % SAMPLE_LENGTH;
+  samples[last_sample_index] = sample;
+}
+
+//Get the average sample.
+unsigned int averageSample() {
+  unsigned int accum = 0;
+  for (int i = 0; i < SAMPLE_LENGTH; i++) accum += samples[i];
+  return accum/SAMPLE_LENGTH;
+}
+
+//Get the top/bottom nth percentile values.
+void findBoundingPercentiles(
+  unsigned int* min, 
+  unsigned int* lower, 
+  unsigned int* middle, 
+  unsigned int* upper,
+  unsigned int* max
+) {
+  const unsigned int PERCENTILE_INVERSE = 10; //3 = 33%, 5 = 20%, 10 = 10%, etc.
+  static unsigned int sortedSamples[SAMPLE_LENGTH] = {0};
+  memcpy(sortedSamples, samples, SAMPLE_LENGTH * sizeof(samples[0]));
+  qsort(sortedSamples, SAMPLE_LENGTH, sizeof(samples[0]), 
+    [](unsigned int* a, unsigned int* b) { return &a < &b; });
+  *min = sortedSamples[0];
+  *lower = sortedSamples[SAMPLE_LENGTH/PERCENTILE_INVERSE];
+  *middle = sortedSamples[SAMPLE_LENGTH/2];
+  *upper = sortedSamples[SAMPLE_LENGTH - SAMPLE_LENGTH/PERCENTILE_INVERSE];
+  *max = sortedSamples[SAMPLE_LENGTH];
+}
+
+
 void setup() {
   Serial.begin(9600);
-  percent = percent / 100;
+  pinMode(ledPin, OUTPUT);
+  analogWrite(ledPin, 5); //standby brightness
 }
+
 
 void loop() {
-
-  while (sampleCounter <= samples) {
-
-    Serial.println("processedResult");
-    Serial.println(processedResult);
-    delay(10);
-
-    micRawValue = analogRead(micInputPin);
-    processedResult = processedResult + micRawValue;
-
-    delay(0);
-    Serial.println(micRawValue); //debug
-    sampleCounter++;
-
-    while (sampleCounter == samples + 1) {
-      //   processedResult = ((processedResult * percent) + processedResult) / sampleCounter; //old method
-      processedResult = (processedResult / sampleCounter);
-
-      //Ready animation
-      analogWrite(ledPin, 255);
-      delay(20);
-      analogWrite(ledPin, 10);
-      delay(20);
-      analogWrite(ledPin, 255);
-      delay(20);
-      analogWrite(ledPin, 10);
-
-      sampleCounter++;
-
-
-    }
-
+  const float threshold = 0.9; //0..1 of max value in buffer
+  auto sample = analogRead(micInputPin); //0..16000-ish, I think?
+  
+  unsigned int min, lower, middle, upper, max;
+  findBoundingPercentiles(&min, &lower, &middle, &upper, &max);
+  auto average = averageSample();
+  
+  if (sample - min > (max - min) * 0.9) {
+    howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
   }
-
-  analogWrite(ledPin, 5); //standby brightness
-
-  grabCounter++;
-
-  if (grabCounter == 50) {
-    grabSample = analogRead(micInputPin);
-    processedResult = (grabSample + processedResult) / 2;
-    sampleCounter++;
-    grabCounter = 0;
-    //Serial.println("grabbed");
-  }
-
-
-  //Serial.println("g");
-  //Serial.println(grabCounter);
-
-
-
-
-  // Serial.println(processedResult);
-  micRawValue = analogRead(micInputPin);
-  delay(0);
-  BumpIt(); //LETTSS GOOOOOOOO
-  if (howBumpingIsIt) {
-    SoundFade();
-  }
-}
-
-void BumpIt() {
-
-  pinMode(ledPin, OUTPUT);
-  micRawValue = analogRead(micInputPin);
-  Serial.println(micRawValue);
-
-  if (micRawValue > (processedResult * percent) + processedResult || micRawValue < (processedResult * percent) - processedResult) {
-    howBumpingIsIt = ITS_TOTALLY_LIT;
-  }
+  if (howBumpingIsIt) SoundFade();
+  
+  addSample(sample);
 }
 
 void writeAndDelay(unsigned int brightness, unsigned int ms) {
   analogWrite(ledPin, brightness);
-  delay(ms);
+  if (ms) delay(ms);
 }
 
 void SoundFade() {
   if (MODE == MODE_INSTANT) {
     switch (howBumpingIsIt) {
       case  2: writeAndDelay(255,  0); break;
-      case  1: writeAndDelay(  0,  0); break;
+      case  1: writeAndDelay(  5,  0); break;
     }
   } else {
     switch (howBumpingIsIt) {
