@@ -6,7 +6,7 @@ float sampleCounter = 0;
 float micRawValue = 0;
 float processedResult = 0;
 
-float percent = 2; //Set the % above the ambient sound to hit the light
+float percent =12; //Set the % above the ambient sound to hit the light
 int samples = 0; //Set # samples to calculate ambient sound
 
 int grabSample = 0;

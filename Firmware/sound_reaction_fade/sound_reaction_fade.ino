@@ -4,8 +4,8 @@ float sampleCounter = 0;
 float micRawValue = 0;
 float processedResult = 0;
 
-const float percent = 1; //Set the % above the ambient sound to hit the light
-float beat_sensitivity = 1.0; //Adjusted to try to stay within target bpm range.
+const float percent = 300; //Set the % above the ambient sound to hit the light
+float beat_sensitivity = 5.0; //Adjusted to try to stay within target bpm range.
 
 const int MODE_INSTANT = 0;
 const int MODE_FADE = 1;
