@@ -396,11 +396,6 @@ F 3 "~" H 2400 2290 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	2160 2290 2250 2290
-Wire Wire Line
-	2160 2190 2250 2190
-Wire Wire Line
-	2250 2190 2250 2290
-Connection ~ 2160 2190
 Connection ~ 2250 2290
 $Comp
 L Device:D_Zener D1
@@ -998,4 +993,13 @@ Wire Wire Line
 	2230 5490 2230 5760
 Text Label 4470 5800 2    50   ~ 0
 test_this
+Wire Wire Line
+	1970 2190 1970 2240
+Wire Wire Line
+	1970 2240 2250 2240
+Wire Wire Line
+	2250 2240 2250 2290
+Wire Wire Line
+	1970 2190 1960 2190
+Connection ~ 1960 2190
 $EndSCHEMATC
