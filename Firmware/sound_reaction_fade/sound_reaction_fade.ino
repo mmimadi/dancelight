@@ -9,7 +9,7 @@ float beat_sensitivity = 5.0; //Adjusted to try to stay within target bpm range.
 
 const int MODE_INSTANT = 0;
 const int MODE_FADE = 1;
-const int MODE = MODE_INSTANT;
+const int MODE = MODE_FADE;
 
 unsigned int howBumpingIsIt = 0;
 const unsigned int ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
@@ -28,32 +28,44 @@ void addSample(unsigned int sample) {
 unsigned int averageSample() {
   unsigned int accum = 0;
   for (int i = 0; i < SAMPLE_LENGTH; i++) accum += samples[i];
-  return accum/SAMPLE_LENGTH;
+  return accum / SAMPLE_LENGTH;
+}
+
+int sampleSortCriteria(const void* a, const void* b) {
+  const unsigned int* x = (unsigned int*) a;
+  const unsigned int* y = (unsigned int*) b;
+
+  if (*x > *y)
+    return 1;
+  else if (*x < *y)
+    return -1;
+  else
+    return 0;
 }
 
 //Get the top/bottom nth percentile values.
 void findBoundingPercentiles(
-  unsigned int* min, 
-  unsigned int* lower, 
-  unsigned int* middle, 
-  unsigned int* upper,
-  unsigned int* max
+  unsigned int& min,
+  unsigned int& lower,
+  unsigned int& middle,
+  unsigned int& upper,
+  unsigned int& max
 ) {
   const unsigned int PERCENTILE_INVERSE = 10; //3 = 33%, 5 = 20%, 10 = 10%, etc.
   static unsigned int sortedSamples[SAMPLE_LENGTH] = {0};
   memcpy(sortedSamples, samples, SAMPLE_LENGTH * sizeof(samples[0]));
-  qsort(sortedSamples, SAMPLE_LENGTH, sizeof(samples[0]), 
-    [](unsigned int* a, unsigned int* b) { return &a - &b; });
-  *min = sortedSamples[0];
-  *lower = sortedSamples[SAMPLE_LENGTH/PERCENTILE_INVERSE];
-  *middle = sortedSamples[SAMPLE_LENGTH/2];
-  *upper = sortedSamples[SAMPLE_LENGTH - SAMPLE_LENGTH/PERCENTILE_INVERSE];
-  *max = sortedSamples[SAMPLE_LENGTH];
+  qsort(sortedSamples, SAMPLE_LENGTH, sizeof(samples[0]), sampleSortCriteria);
+
+  min = sortedSamples[0];
+  lower = sortedSamples[SAMPLE_LENGTH / PERCENTILE_INVERSE];
+  middle = sortedSamples[SAMPLE_LENGTH / 2];
+  upper = sortedSamples[SAMPLE_LENGTH - SAMPLE_LENGTH / PERCENTILE_INVERSE];
+  max = sortedSamples[SAMPLE_LENGTH];
 }
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   pinMode(ledPin, OUTPUT);
   analogWrite(ledPin, 5); //standby brightness
 }
@@ -62,16 +74,18 @@ void setup() {
 void loop() {
   const float threshold = 0.9; //0..1 of max value in buffer
   auto sample = analogRead(micInputPin); //0..16000-ish, I think?
-  
+
   unsigned int min, lower, middle, upper, max;
-  findBoundingPercentiles(&min, &lower, &middle, &upper, &max);
+  findBoundingPercentiles(min, lower, middle, upper, max);
+  Serial.print("max "); Serial.print(max); Serial.print(", ");
+  Serial.print("sample "); Serial.print(sample); Serial.println("");
   auto average = averageSample();
-  
+
   if (sample - min > (max - min) * 0.9) {
     howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
   }
   if (howBumpingIsIt) SoundFade();
-  
+
   addSample(sample);
 }
 
