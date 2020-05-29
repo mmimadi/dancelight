@@ -9,7 +9,7 @@ float beat_sensitivity = 5.0; //Adjusted to try to stay within target bpm range.
 
 const int MODE_INSTANT = 0;
 const int MODE_FADE = 1;
-const int MODE = MODE_FADE;
+const int MODE = MODE_INSTANT;
 
 unsigned int howBumpingIsIt = 0;
 const unsigned int ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
@@ -77,12 +77,16 @@ void loop() {
 
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
+  //*
   Serial.print("max "); Serial.print(max); Serial.print(", ");
   Serial.print("min "); Serial.print(min); Serial.print(", ");
+  Serial.print("lower "); Serial.print(lower); Serial.print(", ");
+  Serial.print("upper "); Serial.print(upper); Serial.print(", ");
   Serial.print("sample "); Serial.print(sample); Serial.println("");
+  //*/
   auto average = averageSample();
 
-  if (sample - min > (max - min) * 0.9) {
+  if (sample > upper || sample < lower) {
     howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
   }
   if (howBumpingIsIt) SoundFade();
@@ -98,8 +102,8 @@ void writeAndDelay(unsigned int brightness, unsigned int ms) {
 void SoundFade() {
   if (MODE == MODE_INSTANT) {
     switch (howBumpingIsIt) {
-      case  2: writeAndDelay(255,  0); break;
-      case  1: writeAndDelay(  5,  0); break;
+      case  2: writeAndDelay(255, 16); break;
+      case  1: writeAndDelay(  5, 16); break;
     }
   } else {
     switch (howBumpingIsIt) {
