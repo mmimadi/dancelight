@@ -60,7 +60,7 @@ void findBoundingPercentiles(
   lower = sortedSamples[SAMPLE_LENGTH / PERCENTILE_INVERSE];
   middle = sortedSamples[SAMPLE_LENGTH / 2];
   upper = sortedSamples[SAMPLE_LENGTH - SAMPLE_LENGTH / PERCENTILE_INVERSE];
-  max = sortedSamples[SAMPLE_LENGTH];
+  max = sortedSamples[SAMPLE_LENGTH - 1];
 }
 
 
@@ -78,6 +78,7 @@ void loop() {
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
   Serial.print("max "); Serial.print(max); Serial.print(", ");
+  Serial.print("min "); Serial.print(min); Serial.print(", ");
   Serial.print("sample "); Serial.print(sample); Serial.println("");
   auto average = averageSample();
 
