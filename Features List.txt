@@ -1,0 +1,9 @@
+Voltage checking
+thermal shutdown
+On off switch
+
+Lot of beats and slow down beats light animations (figure out later)
+
+
+
+

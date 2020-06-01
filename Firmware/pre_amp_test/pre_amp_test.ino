@@ -11,7 +11,7 @@ void setup() {
 
 void loop() {
   val = analogRead(mic);
-  analogWrite(led, 50);
+  analogWrite(led, 100);
 
   Serial.println(val);
   
