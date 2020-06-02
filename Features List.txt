@@ -5,5 +5,13 @@ On off switch
 Lot of beats and slow down beats light animations (figure out later)
 
 
+Schematic:
+Boost converter working
+Check if we can run mic on 3.1v
+If yes reg directly on battery and digital switch. Need to put MCU in deep sleep mode for button monintoring
+if no physical on/off switch
+
+
+
 
 

@@ -1256,10 +1256,10 @@ $EndComp
 Wire Wire Line
 	940  5760 940  5970
 Wire Wire Line
+	1590 5670 1590 5760
+Wire Wire Line
 	1490 5760 1590 5760
 Wire Wire Line
-	1590 5670 1590 5760
-Connection ~ 1590 5760
-Wire Wire Line
 	1590 5760 1940 5760
+Connection ~ 1590 5760
 $EndSCHEMATC
