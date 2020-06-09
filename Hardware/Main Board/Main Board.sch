@@ -568,7 +568,6 @@ F 3 "" H 4620 2980 50  0001 C CNN
 	1    4620 2980
 	1    0    0    -1  
 $EndComp
-Connection ~ 4620 2250
 $Comp
 L power:+5V #PWR016
 U 1 1 5EC728F7
@@ -635,8 +634,6 @@ F 3 "" H 3020 1800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5140 1790 5140 2250
-Wire Wire Line
 	950  2790 950  2990
 Wire Wire Line
 	1450 2890 1450 2990
@@ -694,8 +691,6 @@ Wire Wire Line
 	940  5760 1090 5760
 Text Label 1940 5760 2    50   ~ 0
 MODE
-Wire Wire Line
-	3020 1800 3020 2250
 Connection ~ 3020 2250
 Wire Wire Line
 	4620 2450 4620 2980
@@ -1184,8 +1179,6 @@ Wire Wire Line
 Wire Wire Line
 	8400 3345 8400 2935
 Wire Wire Line
-	4620 2250 5140 2250
-Wire Wire Line
 	8400 2935 7495 2935
 Wire Wire Line
 	7495 2935 7185 2935
@@ -1236,4 +1229,65 @@ Wire Wire Line
 	9000 3645 9465 3645
 Text Label 9465 3645 2    50   ~ 0
 PRMG
+$Comp
+L Device:D_Zener D?
+U 1 1 5EDA6065
+P 4060 1430
+F 0 "D?" H 4100 1160 50  0000 R CNN
+F 1 "1N5819" H 4175 1295 50  0000 R CNN
+F 2 "" H 4060 1430 50  0001 C CNN
+F 3 "~" H 4060 1430 50  0001 C CNN
+	1    4060 1430
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3020 1800 3020 2250
+Wire Wire Line
+	5140 1790 5140 2250
+Wire Wire Line
+	4210 1430 4210 1790
+Wire Wire Line
+	4210 1790 5140 1790
+Connection ~ 5140 1790
+Wire Wire Line
+	3910 1430 1165 1430
+Wire Wire Line
+	1165 1430 1165 1780
+Wire Wire Line
+	1165 1780 940  1780
+Connection ~ 940  1780
+$Comp
+L Device:D_Zener D?
+U 1 1 5EDD461B
+P 4905 2250
+F 0 "D?" H 4945 2055 50  0000 R CNN
+F 1 "???" H 4965 2155 50  0000 R CNN
+F 2 "" H 4905 2250 50  0001 C CNN
+F 3 "~" H 4905 2250 50  0001 C CNN
+	1    4905 2250
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	4620 2250 4755 2250
+Connection ~ 4620 2250
+Wire Wire Line
+	5055 2250 5140 2250
+Text Label 4835 2390 0    50   ~ 0
+test_this
+Text Label 5315 4350 0    50   ~ 0
+1
+Text Label 5320 4490 0    50   ~ 0
+2
+Text Label 5290 4765 0    50   ~ 0
+3
+Text Label 6005 4705 0    50   ~ 0
+6
+Text Label 6050 4505 0    50   ~ 0
+7
+Text Label 5990 4305 0    50   ~ 0
+8
+Text Label 6465 3720 0    50   ~ 0
+input
+Text Label 4740 3660 0    50   ~ 0
+output
 $EndSCHEMATC
