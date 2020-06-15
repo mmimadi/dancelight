@@ -849,8 +849,8 @@ F 3 "" H 3845 6555 50  0001 C CNN
 $EndComp
 Text Notes 7070 6880 0    197  ~ 39
 Flake Technologies (?)\n
-Text Notes 7105 7105 0    79   ~ 16
-Michael Madi\n
+Text Notes 7100 7250 0    79   ~ 16
+Michael Madi | David Roberts\n\n
 Text Notes 7350 7510 0    79   ~ 16
 Rave Lights Main Board\n
 Wire Wire Line
