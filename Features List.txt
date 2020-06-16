@@ -4,13 +4,15 @@ On off switch
 
 Lot of beats and slow down beats light animations (figure out later)
 
+3.9V-4.2V    100% 	4X
+ 
+3.7V-3.9V    75%	3X
 
-Schematic:
-Boost converter working
-Check if we can run mic on 3.1v
-If yes reg directly on battery and digital switch. Need to put MCU in deep sleep mode for button monintoring
-if no physical on/off switch
+3.4V-3.7V    50%	2X
 
+3.0V-3.4V    25%	1x
+
+>3.0V        0%		5X fast
 
 
 
