@@ -9,7 +9,12 @@ float beat_sensitivity = 5.0; //Adjusted to try to stay within target bpm range.
 
 const int MODE_INSTANT = 0;
 const int MODE_FADE = 1;
-const int MODE = MODE_INSTANT;
+const int MODE = MODE_FADE;
+
+unsigned long next_blink = 0;
+unsigned long next_beat = 0;
+unsigned int loop_iterations = 0;
+
 
 unsigned int howBumpingIsIt = 0;
 const unsigned int ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
@@ -32,15 +37,7 @@ unsigned int averageSample() {
 }
 
 int sampleSortCriteria(const void* a, const void* b) {
-  const unsigned int* x = (unsigned int*) a;
-  const unsigned int* y = (unsigned int*) b;
-
-  if (*x > *y)
-    return 1;
-  else if (*x < *y)
-    return -1;
-  else
-    return 0;
+  return *(unsigned int*)a - *(unsigned int*)b;
 }
 
 //Get the top/bottom nth percentile values.
@@ -51,7 +48,7 @@ void findBoundingPercentiles(
   unsigned int& upper,
   unsigned int& max
 ) {
-  const unsigned int PERCENTILE_INVERSE = 10; //3 = 33%, 5 = 20%, 10 = 10%, etc.
+  const unsigned int PERCENTILE_INVERSE = 20; //3 = 33%, 5 = 20%, 10 = 10%, etc.
   static unsigned int sortedSamples[SAMPLE_LENGTH] = {0};
   memcpy(sortedSamples, samples, SAMPLE_LENGTH * sizeof(samples[0]));
   qsort(sortedSamples, SAMPLE_LENGTH, sizeof(samples[0]), sampleSortCriteria);
@@ -78,63 +75,73 @@ void loop() {
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
   //*
+  //if(loop_iterations % 100 == 0) {
   Serial.print("max "); Serial.print(max); Serial.print(", ");
   Serial.print("min "); Serial.print(min); Serial.print(", ");
   Serial.print("lower "); Serial.print(lower); Serial.print(", ");
   Serial.print("upper "); Serial.print(upper); Serial.print(", ");
   Serial.print("sample "); Serial.print(sample); Serial.println("");
+  //}
   //*/
   auto average = averageSample();
 
-  if (sample > upper || sample < lower) {
+  if ((sample > upper || sample < lower) && middle < upper * 0.9 && millis() > next_beat) {
     howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
+    //Serial.print("beat 120");
+    next_beat = millis() + 100;
+  } else {
+    //Serial.println("beat 80");
   }
   if (howBumpingIsIt) SoundFade();
 
-  addSample(sample);
+  if (!(loop_iterations % 2)) addSample(sample);
+  //addSample(sample);
+  loop_iterations++;
 }
 
 void writeAndDelay(unsigned int brightness, unsigned int ms) {
-  analogWrite(ledPin, brightness);
-  if (ms) delay(ms);
+  analogWrite(ledPin, brightness*190/255);
+  next_blink = millis() + ms;
 }
 
 void SoundFade() {
-  if (MODE == MODE_INSTANT) {
-    switch (howBumpingIsIt) {
-      case  2: writeAndDelay(255, 16); break;
-      case  1: writeAndDelay(  5, 16); break;
+  if (millis() >= next_blink) {
+    if (MODE == MODE_INSTANT) {
+      switch (howBumpingIsIt) {
+        case  2: writeAndDelay(255, 16); break;
+        case  1: writeAndDelay(  5, 16); break;
+      }
+    } else {
+      switch (howBumpingIsIt) {
+        case 27: writeAndDelay(255, 2); break;
+        case 26: writeAndDelay(250, 2); break;
+        case 25: writeAndDelay(240, 2); break;
+        case 24: writeAndDelay(230, 2); break;
+        case 23: writeAndDelay(220, 2); break;
+        case 22: writeAndDelay(210, 3); break;
+        case 21: writeAndDelay(200, 3); break;
+        case 20: writeAndDelay(190, 3); break;
+        case 19: writeAndDelay(180, 3); break;
+        case 18: writeAndDelay(170, 2); break;
+        case 17: writeAndDelay(160, 3); break;
+        case 16: writeAndDelay(150, 4); break;
+        case 15: writeAndDelay(140, 5); break;
+        case 14: writeAndDelay(130, 5); break;
+        case 13: writeAndDelay(120, 6); break;
+        case 12: writeAndDelay(110, 5); break;
+        case 11: writeAndDelay(100, 5); break;
+        case 10: writeAndDelay( 90, 5); break;
+        case  9: writeAndDelay( 80, 5); break;
+        case  8: writeAndDelay( 70, 3); break;
+        case  7: writeAndDelay( 60, 3); break;
+        case  6: writeAndDelay( 50, 3); break;
+        case  5: writeAndDelay( 40, 3); break;
+        case  4: writeAndDelay( 30, 3); break;
+        case  3: writeAndDelay( 20, 3); break;
+        case  2: writeAndDelay( 10, 3); break;
+        case  1: writeAndDelay(  5, 1); break;
+      }
     }
-  } else {
-    switch (howBumpingIsIt) {
-      case 27: writeAndDelay(255, 60); break;
-      case 26: writeAndDelay(250, 20); break;
-      case 25: writeAndDelay(240, 20); break;
-      case 24: writeAndDelay(230, 20); break;
-      case 23: writeAndDelay(220, 20); break;
-      case 22: writeAndDelay(210, 30); break;
-      case 21: writeAndDelay(200, 30); break;
-      case 20: writeAndDelay(190, 30); break;
-      case 19: writeAndDelay(180, 30); break;
-      case 18: writeAndDelay(170, 20); break;
-      case 17: writeAndDelay(160, 30); break;
-      case 16: writeAndDelay(150, 40); break;
-      case 15: writeAndDelay(140, 50); break;
-      case 14: writeAndDelay(130, 55); break;
-      case 13: writeAndDelay(120, 60); break;
-      case 12: writeAndDelay(110, 50); break;
-      case 11: writeAndDelay(100, 50); break;
-      case 10: writeAndDelay( 90, 50); break;
-      case  9: writeAndDelay( 80, 50); break;
-      case  8: writeAndDelay( 70, 30); break;
-      case  7: writeAndDelay( 60, 30); break;
-      case  6: writeAndDelay( 50, 30); break;
-      case  5: writeAndDelay( 40, 30); break;
-      case  4: writeAndDelay( 30, 30); break;
-      case  3: writeAndDelay( 20, 30); break;
-      case  2: writeAndDelay( 10, 30); break;
-      case  1: writeAndDelay(  5, 10); break;
-    }
+    howBumpingIsIt--;
   }
-  howBumpingIsIt--;
 }
