@@ -1,3 +1,6 @@
+#include<Arduino.h>
+#include<EEPROM.h>
+
 #define END 0
 #define START 1
 #define BLINK 2
@@ -10,59 +13,136 @@
 
 static const byte micInputPin = 0;
 static const byte ledPin = 5;
-static const byte buttonPin = 6;
+
+const byte button = 2;
+byte buttonState = 0; //HIGH/LOW
+byte buttonHandler = 0; //Double Tap Variable Count
+byte holdCounter = 0;
+byte doubleTapSleep = 0;
+byte doubleTapState = 0;
+byte powerStatus = 0;
+static byte mode = 1;
+
 float percent = 100; //set sound threshold percentage
+
 
 void setup() {
   Serial.begin(9600);
   pinMode(ledPin, OUTPUT);
   percent = percent / 100;
   resetPreset();
+
+  pinMode(button, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(button), iHandler, FALLING);
+  pinMode(button, INPUT);
+
+  mode = EEPROM.read(0);
+
 }
 
 void loop() {
+
   //Monitor preset advancement button and run right preset.
   static const byte numModes = 3;
   static const unsigned long buttonPressConfirmationTimeMs = 50;
-  static byte mode = 1;
+
   static bool pressed = true;
   static bool lastProcessedPressed = false;
   static unsigned long eventTimeMs = 0;
 
-  int buttonState = digitalRead(buttonPin);
-  if (buttonState == LOW) { // low means the D2 pin is pulled to ground aka connect D2 to GND on the arduino
-    if (!pressed) {
-      pressed = true;
-      eventTimeMs = millis() + buttonPressConfirmationTimeMs;
+  /////////////New Intertupt Based Button////////////////////
+
+  buttonState = 0;
+  doubleTapSleep = 0;
+  doubleTapState = 0;
+  holdCounter = 0;
+
+  Serial.println(mode);
+
+  while (buttonHandler >= 1 && holdCounter < 250) {   //!!!should be ==, >= is for crappy (temporary) debounce!!!
+    doubleTapState = 1;
+
+    buttonState = digitalRead(button);
+
+    if (buttonState == HIGH) { //Exit on button release
+      buttonHandler = 0;
+      mode++;
     }
-  } else {
-    if (pressed) {
-      pressed = false;
-      eventTimeMs = millis() + buttonPressConfirmationTimeMs;
+    if (holdCounter > 248 && powerStatus == 0) {
+      holdCounter = 0;
+      PowerUp();
+    }
+    if (holdCounter > 248 && powerStatus == 1) {
+      holdCounter = 0;
+      PowerDown();
+    }
+    holdCounter++;
+    delay(7);
+  }
+
+  while (doubleTapState == 1) {
+
+    buttonState = digitalRead(button);
+    if (buttonState == HIGH) {
+      buttonHandler = 0;
+    }
+    doubleTapSleep++;
+    delay(5);
+
+    if (buttonState == LOW) {
+      doubleTapState = 2;
+      BatteryReport();
+    }
+    if (doubleTapSleep > 30) { //sleep timeout
+      doubleTapState = 0;
     }
   }
 
-  if (lastProcessedPressed != pressed && millis() >= eventTimeMs) {
-    lastProcessedPressed = pressed;
-    pressed && (mode = ++mode % numModes);
-  }
 
-  if (mode == 0) {
+  ////////////Old Button Code///////////////////
+  /*
+    int buttonState = digitalRead(buttonPin);
+    if (buttonState == LOW) { // low means the D2 pin is pulledPin to ground aka connect D2 to GND on the arduino
+     if (!pressed) {
+       pressed = true;
+       eventTimeMs = millis() + buttonPressConfirmationTimeMs;
+     }
+    } else {
+     if (pressed) {
+       pressed = false;
+       eventTimeMs = millis() + buttonPressConfirmationTimeMs;
+     }
+    }
+
+    if (lastProcessedPressed != pressed && millis() >= eventTimeMs) {
+     lastProcessedPressed = pressed;
+     pressed && (mode = ++mode % numModes);
+    }
+
+  */
+  if (mode == 1) {
     LOG_MODE && Serial.println("mode 0: solid");
     analogWrite(ledPin, 255);
-  } else if (mode == 1) {
+  } else if (mode == 2) {
     LOG_MODE && Serial.println("mode 1: react to sound");
     processAudio();
-  } else if (mode == 2) {
+  } else if (mode == 3) {
     LOG_MODE && Serial.println("mode 2: blink");
     processPreset();
-  } else {
-    Serial.print("unknown mode: ");
+  } else if (mode >= 3 | mode <= 0) {
+    mode = 1;
+    delay(100);
     Serial.println(mode);
     delay(100); //flush the buffer
-    exit(5); //Invalid command. Ruh roh.
+    //exit(5); //Invalid command. Ruh roh.
   }
+
+
 }
+
+
+
+
 
 
 //////////////////////////////////
@@ -80,20 +160,20 @@ void processAudio() {
     micRawValue = analogRead(micInputPin); //uncomment with actual mic attached
     processedResult = processedResult + micRawValue;
     delay(7);
-    Serial.println(micRawValue); //debug
+    // Serial.println(micRawValue); //debug
     sampleCounter++;
   }
   ////////////////debug///////////////////
-  Serial.println("totaled");
-  Serial.println(processedResult);
-  delay(100);
+  //  Serial.println("totaledPin");
+  //  Serial.println(processedResult);
+  // delay(100);
   ///////////////////////////////////////
 
   processedResult = ((processedResult * percent) + processedResult) / sampleCounter;
 
   ///////////////debug///////////////////
-  Serial.println("DB threshold");
-  Serial.println(processedResult);
+  // Serial.println("DB threshold");
+  //  Serial.println(processedResult);
   //////////////////////////////////////
 
   BumpIt(); //LETTSS GOOOOOOOO
@@ -101,23 +181,35 @@ void processAudio() {
 }
 
 void BumpIt() {
+  /*  float micRawValue = analogRead(micInputPin);
+    micRawValue = analogRead(micInputPin); //uncomment with actual mic attached
+    pinMode(ledPin, OUTPUT);
+    float processedResult = 0;
+    if (micRawValue > processedResult) {
 
-  float micRawValue = analogRead(micInputPin);
-  micRawValue = analogRead(micInputPin); //uncomment with actual mic attached
-  pinMode(ledPin, OUTPUT);
-  float processedResult = 0;
-  if (micRawValue > processedResult) {
+      SoundFade();
 
-    SoundFade();
+    } else {
 
-  } else {
+      analogWrite(ledPin, 20); //standbye brightness
+    }
 
-    analogWrite(ledPin, 20); //standbye brightness
-  }
+
+  */
+
+  delay(20);
+  delay(20);
+  analogWrite(ledPin, 240);
+  delay(20);
+  analogWrite(ledPin, 230);
+  delay(20);
+  analogWrite(ledPin, 100);
+  delay(20);
+  analogWrite(ledPin, 10);
+
 }
 
 void SoundFade() {
-
   analogWrite(ledPin, 255);
   delay(60);
   analogWrite(ledPin, 250);
@@ -271,15 +363,15 @@ void processPreset() {
   switch (patterns(pc)) {
     return; case END:
       resetPreset();
-    return; case START: //Seek random preset when we encounter the start of one.
+    return; case START: //Seek random preset when we enholdCounter the start of one.
       selectRandomPreset();
     return; case BLINK:
-      LOG_EXEC && Serial.println("p: blink led");
+      LOG_EXEC && Serial.println("p: blink ledPin");
       pc++; //consume instruction
       analogWrite(ledPin, patterns(pc++));
       delay(patterns(pc++));
     return; case UBLINK:
-      LOG_EXEC && Serial.println("p: ublink led");
+      LOG_EXEC && Serial.println("p: ublink ledPin");
       pc++; //consume instruction
       analogWrite(ledPin, patterns(pc++));
       delayMicroseconds(patterns(pc++));
@@ -305,4 +397,79 @@ void processPreset() {
       delay(100);
       exit(5); //Invalid command. Ruh roh.
   }
+}
+
+
+//Power Sequences
+
+void iHandler() {
+  sei();
+  buttonHandler++;
+  cli();
+}
+
+int BatteryReport() {
+  mode--;
+  mode--;
+
+  delay(200);
+  //battery feedback here
+  analogWrite(ledPin, 10);
+  delay(2000);
+  analogWrite(ledPin, 255);
+  delay(100);
+  analogWrite(ledPin, 10);
+  delay(100);
+  analogWrite(ledPin, 255);
+  delay(100);
+  analogWrite(ledPin, 10);
+  delay(100);
+  analogWrite(ledPin, 255);
+  delay(100);
+  analogWrite(ledPin, 0);
+  delay(2000);
+}
+
+int PowerUp() {
+  mode--;
+  analogWrite(ledPin, 10);
+  delay(70);
+  analogWrite(ledPin, 50);
+  delay(70);
+  analogWrite(ledPin, 100);
+  delay(70);
+  analogWrite(ledPin, 150);
+  delay(70);
+  analogWrite(ledPin, 200);
+  delay(70);
+  analogWrite(ledPin, 255);
+  delay(1000);
+  powerStatus = 1;
+  mode = EEPROM.read(0);
+  void setup();
+  //PSU pullup
+}
+
+int PowerDown() {
+  mode--;
+
+
+  analogWrite(ledPin, 255);
+  delay(70);
+  analogWrite(ledPin, 200);
+  delay(70);
+  analogWrite(ledPin, 150);
+  delay(70);
+  analogWrite(ledPin, 100);
+  delay(70);
+  analogWrite(ledPin, 50);
+  delay(70);
+  analogWrite(ledPin, 10);
+  EEPROM.write(0, mode);
+  delay(1000);
+  analogWrite(ledPin, 0);
+
+  powerStatus = 0;
+  //psu pullup
+  //low power mode
 }
