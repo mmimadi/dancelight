@@ -9,7 +9,7 @@ const int MODE = MODE_FADE;
 unsigned long next_blink = 0;
 unsigned long next_beat = 0;
 unsigned int loop_iterations = 0;
-unsigned int rbdm_silence_threshold = 15; //15 at ~300. TODO: determine if this scales with battery level.
+unsigned int rbdm_silence_threshold = 30; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
 unsigned int rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
 
 

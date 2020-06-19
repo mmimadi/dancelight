@@ -26,6 +26,11 @@ int BatteryReport() {
   delay(100);
   analogWrite(ledPin, 0);
   delay(2000);
+int PRR1;
+int PRSPI1;
+PRR1 |(1<<PRSPI1);
+
+  
 }
 
 int PowerUp() {

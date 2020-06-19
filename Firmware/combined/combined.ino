@@ -1,6 +1,9 @@
 #include<Arduino.h>
 #include<EEPROM.h>
 
+#define cbi
+#define sbi
+
 #define END 0
 #define START 1
 #define BLINK 2
@@ -32,7 +35,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(button), iHandler, FALLING);
   pinMode(button, INPUT);
 
-  mode = EEPROM.read(0);
+  //mode = EEPROM.read(0);
 }
 
 void loop() {
@@ -112,20 +115,20 @@ void loop() {
     }
 
   */
-  
-  if (mode == 0) {
+  Serial.println(mode);
+  if (mode == 1) {
     LOG_MODE && Serial.println("mode 1: react to sound");
     ringBufferLoop(); //use ring buffer beat detection
-  } else if (mode == 1) {
+  } else if (mode == 2) {
     LOG_MODE && Serial.println("mode 2: blink");
     processPreset();
-  } else if (mode == 2) {
+  } else if (mode == 3) {
     LOG_MODE && Serial.println("mode 0: solid");
     analogWrite(ledPin, 255);
-  } else if (mode >= 3) {
+  } else if (mode >= 4) {
     Serial.print("Bad mode: ");
     Serial.print(mode);
     Serial.println(". Reset to 0.");
-    mode = 0;
+    mode = 1;
   }
 }

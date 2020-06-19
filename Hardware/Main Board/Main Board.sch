@@ -1082,26 +1082,6 @@ F 3 "" H 7410 5180 50  0001 C CNN
 	1    7410 5180
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	8625 4300 8625 3695
-Text Label 8010 4300 0    50   ~ 0
-SUPPLY_DETECT
-$Comp
-L MCU_Microchip_ATtiny:ATtiny814-SS U3
-U 1 1 5EE6BDE9
-P 7410 4400
-F 0 "U3" H 6845 5115 50  0000 C CNN
-F 1 "ATtiny814-SS" H 7060 5045 50  0000 C CNN
-F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 7410 4400 50  0001 C CIN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/40001912A.pdf" H 7410 4400 50  0001 C CNN
-	1    7410 4400
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7410 3695 7410 3700
-Wire Wire Line
-	7410 3585 7410 3695
-Connection ~ 7410 3695
 $Comp
 L Device:CP1_Small C6
 U 1 1 5EE78E32
@@ -1213,29 +1193,25 @@ Wire Wire Line
 	5795 6065 5795 6525
 Text Notes 2225 1980 0    50   ~ 0
 Dynamic Power Delivery
-$Comp
-L Device:R_Small R9
-U 1 1 5EEC31AD
-P 7940 3695
-F 0 "R9" V 7800 3615 50  0000 L CNN
-F 1 "1M" V 7860 3625 50  0000 L CNN
-F 2 "" H 7940 3695 50  0001 C CNN
-F 3 "~" H 7940 3695 50  0001 C CNN
-	1    7940 3695
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	7840 3695 7410 3695
 Wire Wire Line
 	5675 2360 5675 2580
 Wire Wire Line
 	2975 2355 2975 2580
 Wire Wire Line
 	890  2350 890  2580
-Wire Wire Line
-	8040 3695 8625 3695
-Wire Wire Line
-	8010 4300 8625 4300
 Text Notes 590  1380 0    50   ~ 0
 Design Requirements:\n\nR15 & R16 Close to U1. Feedback line short as possible. Short and wide traces\n\nC8 & C9 close to U2\n\nC10 & C11 close to U3\n\nC6 as close to pre amp supply as possible\n\n
+$Comp
+L MCU_Microchip_ATtiny:ATtiny814-SS U3
+U 1 1 5EE6BDE9
+P 7410 4400
+F 0 "U3" H 6845 5115 50  0000 C CNN
+F 1 "ATtiny814-SS" H 7060 5045 50  0000 C CNN
+F 2 "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm" H 7410 4400 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/40001912A.pdf" H 7410 4400 50  0001 C CNN
+	1    7410 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7410 3585 7410 3700
 $EndSCHEMATC
