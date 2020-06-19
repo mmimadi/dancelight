@@ -23,13 +23,9 @@ byte doubleTapState = 0;
 byte powerStatus = 0;
 static byte mode = 1;
 
-float percent = 100; //set sound threshold percentage
-
-
 void setup() {
   Serial.begin(57600);
   pinMode(ledPin, OUTPUT);
-  percent = percent / 100;
   resetPreset();
 
   pinMode(button, INPUT_PULLUP);
