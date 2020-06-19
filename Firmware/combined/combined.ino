@@ -119,7 +119,6 @@ void loop() {
   
   if (mode == 0) {
     LOG_MODE && Serial.println("mode 1: react to sound");
-    // processAudio(); //use exponential decay beat detection
     ringBufferLoop(); //use ring buffer beat detection
   } else if (mode == 1) {
     LOG_MODE && Serial.println("mode 2: blink");
