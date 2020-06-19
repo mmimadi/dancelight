@@ -128,9 +128,9 @@ void loop() {
     LOG_MODE && Serial.println("mode 0: solid");
     analogWrite(ledPin, 255);
   } else if (mode >= 3) {
-    Serial.print('Bad mode: ');
+    Serial.print("Bad mode: ");
     Serial.print(mode);
-    Serial.println('. Reset to 0.');
+    Serial.println(". Reset to 0.");
     mode = 0;
   }
 }
