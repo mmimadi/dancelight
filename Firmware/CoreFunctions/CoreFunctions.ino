@@ -1,6 +1,6 @@
 #include<Arduino.h>
 
-const byte button = 2;
+const byte button = 7  ;
 
 byte buttonState = 0; //HIGH/LOW
 byte buttonHandler = 0; //Variable Count
@@ -9,7 +9,7 @@ byte counter = 0;
 byte doubleTapSleep = 0;
 byte doubleTapState = 0;
 
-byte led = 5;
+byte led = 6;
 byte DevicePower = 0;
 
 void setup() {

@@ -9,7 +9,7 @@ const int MODE = MODE_FADE;
 unsigned long next_blink = 0;
 unsigned long next_beat = 0;
 unsigned int loop_iterations = 0;
-unsigned int rbdm_silence_threshold = 30; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
+unsigned int rbdm_silence_threshold = 44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
 unsigned int rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
 
 
@@ -64,16 +64,16 @@ void ringBufferLoop() {
 
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
-  //*
-  //if(loop_iterations % 100 == 0) {
-  //Serial.print("max "); Serial.print(max); Serial.print(", ");
-  //Serial.print("min "); Serial.print(min); Serial.print(", ");
-  //Serial.print("lower "); Serial.print(lower); Serial.print(", ");
-  //Serial.print("upper "); Serial.print(upper); Serial.print(", ");
-  //Serial.print("middle "); Serial.print(middle); Serial.print(", ");
-  //Serial.print("sample "); Serial.print(sample); Serial.println("");
-  //}
-  //*/
+  
+ if(loop_iterations % 100 == 0) {
+  Serial.print("max "); Serial.print(max); Serial.print(", ");
+  Serial.print("min "); Serial.print(min); Serial.print(", ");
+  Serial.print("lower "); Serial.print(lower); Serial.print(", ");
+  Serial.print("upper "); Serial.print(upper); Serial.print(", ");
+  Serial.print("middle "); Serial.print(middle); Serial.print(", ");
+  Serial.print("sample "); Serial.print(sample); Serial.println("");
+  }
+  
   auto average = averageSample();
 
   if ((sample > upper || sample < lower) && upper - lower > rbdm_silence_threshold && millis() > next_beat) {

@@ -1,8 +1,7 @@
 #include<Arduino.h>
 #include<EEPROM.h>
 
-#define cbi
-#define sbi
+
 
 #define END 0
 #define START 1
@@ -15,16 +14,19 @@
 #define LOG_MODE false
 
 static const byte micInputPin = 0;
-static const byte ledPin = 5;
+static const byte ledPin = 5; 
+const byte button = 2; 
 
-const byte button = 2;
-byte buttonState = 0; //HIGH/LOW
+ byte buttonState = 0; //HIGH/LOW
 byte buttonHandler = 0; //Double Tap Variable Count
 byte holdCounter = 0;
 byte doubleTapSleep = 0;
 byte doubleTapState = 0;
 byte powerStatus = 0;
 static byte mode = 1;
+
+
+//
 
 void setup() {
   Serial.begin(57600);
@@ -46,6 +48,8 @@ void loop() {
   static bool pressed = true;
   static bool lastProcessedPressed = false;
   static unsigned long eventTimeMs = 0;
+
+ 
 
   /////////////New Intertupt Based Button////////////////////
 
