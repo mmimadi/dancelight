@@ -1,5 +1,7 @@
 #include<Arduino.h>
 #include<EEPROM.h>
+#include<avr/sleep.h>
+#include<avr/wdt.h>
 
 
 
@@ -17,13 +19,13 @@ static const byte micInputPin = 0;
 static const byte ledPin = 5; 
 const byte button = 2; 
 
- byte buttonState = 0; //HIGH/LOW
+byte buttonState = 0; //HIGH/LOW
 byte buttonHandler = 0; //Double Tap Variable Count
 byte holdCounter = 0;
 byte doubleTapSleep = 0;
 byte doubleTapState = 0;
-byte powerStatus = 0;
-static byte mode = 1;
+byte powerStatus = 1;
+static byte mode = 2;
 
 
 //
@@ -32,6 +34,7 @@ void setup() {
   Serial.begin(57600);
   pinMode(ledPin, OUTPUT);
   resetPreset();
+//  powerDown();
 
   pinMode(button, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(button), iHandler, FALLING);
@@ -42,12 +45,12 @@ void setup() {
 
 void loop() {
   //Monitor preset advancement button and run right preset.
-  static const byte numModes = 3;
-  static const unsigned long buttonPressConfirmationTimeMs = 50;
+//  static const byte numModes = 3;
+//  static const unsigned long buttonPressConfirmationTimeMs = 50;
 
-  static bool pressed = true;
-  static bool lastProcessedPressed = false;
-  static unsigned long eventTimeMs = 0;
+  //static bool pressed = true;
+ // static bool lastProcessedPressed = false;
+//  static unsigned long eventTimeMs = 0;
 
  
 
@@ -63,6 +66,13 @@ void loop() {
 
     buttonState = digitalRead(button);
 
+
+    if(powerStatus == 0){
+      analogWrite(ledPin, 255);
+      delay(1000);
+      analogWrite(ledPin, 0);
+      Sleep();
+    }
     if (buttonState == HIGH) { //Exit on button release
       buttonHandler = 0;
       mode++;
@@ -122,17 +132,25 @@ void loop() {
   Serial.println(mode);
   if (mode == 1) {
     LOG_MODE && Serial.println("mode 1: react to sound");
-    ringBufferLoop(); //use ring buffer beat detection
+    //ringBufferLoop(); //use ring buffer beat detection
+
+     LOG_MODE && Serial.println("mode 3: solid");
+    analogWrite(ledPin, 255);
+    
   } else if (mode == 2) {
     LOG_MODE && Serial.println("mode 2: blink");
-    processPreset();
+    //processPreset();
+    
+   LOG_MODE && Serial.println("mode 3: solid");
+    analogWrite(ledPin, 255);
+    
   } else if (mode == 3) {
-    LOG_MODE && Serial.println("mode 0: solid");
+    LOG_MODE && Serial.println("mode 3: solid");
     analogWrite(ledPin, 255);
   } else if (mode >= 4) {
     Serial.print("Bad mode: ");
     Serial.print(mode);
-    Serial.println(". Reset to 0.");
+    Serial.println(". Reset to 1.");
     mode = 1;
   }
 }
