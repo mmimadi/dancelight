@@ -68,7 +68,7 @@ void buttonLogic() {
   }
 
   while (doubleTapState == 1) {
-    analogWrite(ledPin, 200);
+    
     buttonState = digitalRead(button);
     if (buttonState == HIGH) {
       buttonHandler = 0;
@@ -83,6 +83,7 @@ void buttonLogic() {
       doubleTapState = 0;
     }
     if (powerStatus == 0 && doubleTapSleep > 30) {
+      analogWrite(ledPin, 10);
       delay(2000);
       doubleTapState = 0;
       Sleep();
@@ -125,25 +126,21 @@ void buttonLogic() {
 
 void modeHandler() {
 
-  if (mode == 1) {
+  if (mode == 1 && powerStatus == 1) {
     LOG_MODE && Serial.println("mode 1: react to sound");
-    //ringBufferLoop(); //use ring buffer beat detection
+    ringBufferLoop(); //use ring buffer beat detection
 
-    LOG_MODE && Serial.println("mode 3: solid");
-    analogWrite(ledPin, 255);
-
-  } else if (mode == 2) {
+  
+  } else if (mode == 2 && powerStatus == 1) {
     LOG_MODE && Serial.println("mode 2: blink");
-    //processPreset();
+    processPreset();
 
+   
+  } else if (mode == 3 && powerStatus == 1) {
     LOG_MODE && Serial.println("mode 3: solid");
     analogWrite(ledPin, 255);
 
-  } else if (mode == 3) {
-    LOG_MODE && Serial.println("mode 3: solid");
-    analogWrite(ledPin, 255);
-
-  } else if (mode >= 4) {
+  } else if (mode >= 4 && powerStatus == 1) {
     Serial.print("Bad mode: ");
     Serial.print(mode);
     Serial.println(". Reset to 1.");
