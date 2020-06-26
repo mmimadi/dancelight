@@ -64,16 +64,16 @@ void ringBufferLoop() {
 
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
-  
- if(loop_iterations % 100 == 0) {
-  Serial.print("max "); Serial.print(max); Serial.print(", ");
-  Serial.print("min "); Serial.print(min); Serial.print(", ");
-  Serial.print("lower "); Serial.print(lower); Serial.print(", ");
-  Serial.print("upper "); Serial.print(upper); Serial.print(", ");
-  Serial.print("middle "); Serial.print(middle); Serial.print(", ");
-  Serial.print("sample "); Serial.print(sample); Serial.println("");
-  }
-  
+
+  /*if(loop_iterations % 100 == 0) {
+    Serial.print("max "); Serial.print(max); Serial.print(", ");
+    Serial.print("min "); Serial.print(min); Serial.print(", ");
+    Serial.print("lower "); Serial.print(lower); Serial.print(", ");
+    Serial.print("upper "); Serial.print(upper); Serial.print(", ");
+    Serial.print("middle "); Serial.print(middle); Serial.print(", ");
+    Serial.print("sample "); Serial.print(sample); Serial.println("");
+    }
+  */
   auto average = averageSample();
 
   if ((sample > upper || sample < lower) && upper - lower > rbdm_silence_threshold && millis() > next_beat) {
@@ -91,7 +91,7 @@ void ringBufferLoop() {
 }
 
 void writeAndDelay(unsigned int brightness, unsigned int ms) {
-  analogWrite(ledPin, brightness*190/255);
+  analogWrite(ledPin, brightness * 190 / 255);
   next_blink = millis() + ms;
 }
 

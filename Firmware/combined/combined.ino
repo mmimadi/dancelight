@@ -12,9 +12,12 @@
 #define LOG_EXEC false
 #define LOG_MODE false
 
+const byte batteryPin = 3;
+float batteryVoltage = 0;
 static const byte micInputPin = 0;
 static const byte ledPin = 5;
 const byte button = 2;
+
 byte buttonState = 0; //HIGH/LOW
 byte buttonHandler = 0; //Double Tap Variable Count
 byte holdCounter = 0;
@@ -22,6 +25,8 @@ byte doubleTapSleep = 0;
 byte doubleTapState = 0;
 byte powerStatus = 1;
 static byte mode = 1;
+byte flash = 0;
+byte blinkDelay = 0;
 
 void setup() {
   Serial.begin(57600);
@@ -30,18 +35,14 @@ void setup() {
   pinMode(button, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(button), iHandler, FALLING);
   pinMode(button, INPUT);
+  pinMode(batteryPin, INPUT);
 }
 
 void loop() {
   buttonLogic();
   modeHandler();
-  Serial.println(mode);
 }
-
-///////New Interupt Based Button////////////
-
 void buttonLogic() {
-
   buttonState = 0;
   doubleTapSleep = 0;
   doubleTapState = 0;
@@ -68,7 +69,6 @@ void buttonLogic() {
   }
 
   while (doubleTapState == 1) {
-    
     buttonState = digitalRead(button);
     if (buttonState == HIGH) {
       buttonHandler = 0;
@@ -83,14 +83,25 @@ void buttonLogic() {
       doubleTapState = 0;
     }
     if (powerStatus == 0 && doubleTapSleep > 30) {
-      analogWrite(ledPin, 10);
-      delay(2000);
-      doubleTapState = 0;
-      Sleep();
+      
+      byte wait = 0;
+      while (wait <= 100) {
+        //Serial.println(wait);
+        delay(25);
+        buttonState = digitalRead(button);
+        if (buttonState == LOW) {
+          buttonHandler++;
+          buttonLogic();
+        }
+        analogWrite(ledPin, 10);
+        wait++;
+      }
+      if (powerStatus == 0) {
+        doubleTapState = 0;
+        Sleep();
+      }
     }
   }
-
-
   ////////////Old Polling Button Code///////////////////
   /*
     Monitor preset advancement button and run right preset.
@@ -121,30 +132,25 @@ void buttonLogic() {
     }
 
   */
-
 }
 
 void modeHandler() {
-
   if (mode == 1 && powerStatus == 1) {
     LOG_MODE && Serial.println("mode 1: react to sound");
     ringBufferLoop(); //use ring buffer beat detection
 
-  
   } else if (mode == 2 && powerStatus == 1) {
     LOG_MODE && Serial.println("mode 2: blink");
     processPreset();
 
-   
   } else if (mode == 3 && powerStatus == 1) {
     LOG_MODE && Serial.println("mode 3: solid");
     analogWrite(ledPin, 255);
 
   } else if (mode >= 4 && powerStatus == 1) {
-    Serial.print("Bad mode: ");
-    Serial.print(mode);
-    Serial.println(". Reset to 1.");
+    //Serial.print("Bad mode: ");
+    // Serial.print(mode);
+    //  Serial.println(". Reset to 1.");
     mode = 1;
   }
-
 }
