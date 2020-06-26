@@ -1,0 +1,2 @@
+void resetPreset();
+void processPreset();

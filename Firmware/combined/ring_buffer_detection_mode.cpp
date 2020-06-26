@@ -1,3 +1,6 @@
+#include "common.hpp"
+#include "ring_buffer_detection_mode.hpp"
+
 float sampleCounter = 0;
 float micRawValue = 0;
 float processedResult = 0;
@@ -64,16 +67,14 @@ void ringBufferLoop() {
 
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
-
-  /*if(loop_iterations % 100 == 0) {
-    Serial.print("max "); Serial.print(max); Serial.print(", ");
-    Serial.print("min "); Serial.print(min); Serial.print(", ");
-    Serial.print("lower "); Serial.print(lower); Serial.print(", ");
-    Serial.print("upper "); Serial.print(upper); Serial.print(", ");
-    Serial.print("middle "); Serial.print(middle); Serial.print(", ");
-    Serial.print("sample "); Serial.print(sample); Serial.println("");
-    }
-  */
+  
+  Serial.print("max "); Serial.print(max); Serial.print(", ");
+  Serial.print("min "); Serial.print(min); Serial.print(", ");
+  Serial.print("lower "); Serial.print(lower); Serial.print(", ");
+  Serial.print("upper "); Serial.print(upper); Serial.print(", ");
+  Serial.print("middle "); Serial.print(middle); Serial.print(", ");
+  Serial.print("sample "); Serial.print(sample); Serial.println("");
+  
   auto average = averageSample();
 
   if ((sample > upper || sample < lower) && upper - lower > rbdm_silence_threshold && millis() > next_beat) {

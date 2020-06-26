@@ -1,11 +1,8 @@
-//Power Sequences
+#include "common.hpp"
+#include "combined.hpp"
+#include "power_sequences.hpp"
 
-void iHandler() {
-  sei();
-  sleep_disable();
-  buttonHandler++;
-  cli();
-}
+float batteryVoltage = 0;
 
 int BatteryReport() {
   mode--;
@@ -19,34 +16,23 @@ int BatteryReport() {
 
   if (batteryVoltage > 3.9) {
     Serial.println("100%");
-    flash = 4;
-    blinkDelay = 200;
-    batteryBlink();
-
+    BatteryBlink(4, 200);
 
   } else if (batteryVoltage < 3.89 && batteryVoltage > 3.7) {
     Serial.println("75%");
-    flash = 3;
-    blinkDelay = 200;
-    batteryBlink();
+    BatteryBlink(3, 200);
 
   } else if (batteryVoltage < 3.69 && batteryVoltage > 3.4) {
     Serial.println("50%");
-    flash = 2;
-    blinkDelay = 200;
-    batteryBlink();
+    BatteryBlink(2, 200);
 
   } else if (batteryVoltage < 3.39 && batteryVoltage > 3.01) {
     Serial.println("25%");
-    flash = 1;
-    blinkDelay = 200;
-    batteryBlink();
+    BatteryBlink(1, 200);
 
   } else if (batteryVoltage < 3.00) {
     Serial.println("Charge Now");
-    flash = 8;
-    blinkDelay = 50;
-    batteryBlink();
+    BatteryBlink(8, 50);
   }
 
   if (powerStatus == 0) {
@@ -54,8 +40,8 @@ int BatteryReport() {
   }
 }
 
-int batteryBlink() {
-  for (byte i = 0; i < flash; i++) {
+int BatteryBlink(uint8_t flash, const uint8_t blinkDelay) {
+  while(flash--) {
     analogWrite(ledPin, 255);
     delay(blinkDelay);
     analogWrite(ledPin, 0);

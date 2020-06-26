@@ -1,21 +1,11 @@
-#include<Arduino.h>
-#include<EEPROM.h>
-#include<avr/sleep.h>
-#include<avr/wdt.h>
+#include "common.hpp"
+#include "combined.hpp"
+#include "preset_pattern_state_machine.hpp"
+#include "power_sequences.hpp"
+#include "ring_buffer_detection_mode.hpp"
 
-#define END 0
-#define START 1
-#define BLINK 2
-#define UBLINK 3
-#define REPEAT 4
-#define LOG_SEEK false
-#define LOG_EXEC false
 #define LOG_MODE false
 
-const byte batteryPin = 3;
-float batteryVoltage = 0;
-static const byte micInputPin = 0;
-static const byte ledPin = 5;
 const byte button = 2;
 
 byte buttonState = 0; //HIGH/LOW
@@ -23,9 +13,6 @@ byte buttonHandler = 0; //Double Tap Variable Count
 byte holdCounter = 0;
 byte doubleTapSleep = 0;
 byte doubleTapState = 0;
-byte powerStatus = 1;
-static byte mode = 1;
-byte flash = 0;
 byte blinkDelay = 0;
 
 void setup() {
@@ -42,6 +29,15 @@ void loop() {
   buttonLogic();
   modeHandler();
 }
+
+void iHandler() {
+  sei();
+  sleep_disable();
+  buttonHandler++;
+  cli();
+}
+
+
 void buttonLogic() {
   buttonState = 0;
   doubleTapSleep = 0;

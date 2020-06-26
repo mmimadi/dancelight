@@ -1,6 +1,13 @@
-/////////////////////////////
-//   DDR's Blinking Code   //
-/////////////////////////////
+#include "common.hpp"
+
+#define LOG_SEEK false
+#define LOG_EXEC false
+
+#define END 0
+#define START 1
+#define BLINK 2
+#define UBLINK 3
+#define REPEAT 4
 
 static const unsigned short int pattern_data[] PROGMEM = {
   START,  0, BLINK, 255, 10000,

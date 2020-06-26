@@ -1,0 +1,2 @@
+void ringBufferLoop();
+void SoundFadeDelayless();
