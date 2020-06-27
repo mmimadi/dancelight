@@ -1,10 +1,88 @@
+#include <EEPROM.h>
+#include <avr/sleep.h>
+//#include <avr/wdt.h> //Watchdog timer handling is not used right now.
 #include "common.hpp"
-#include "combined.hpp"
 #include "power_sequences.hpp"
 
-float batteryVoltage = 0;
+static void Power::setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(button, INPUT_PULLUP);
+  attachInterrupt(button, iHandler, FALLING);
+  pinMode(button, INPUT);
+  pinMode(batteryPin, INPUT);
+}
 
-int BatteryReport() {
+static void Power::iHandler() {
+  sei();
+  sleep_disable();
+  buttonHandler++;
+  cli();
+}
+
+void Power::buttonLogic() {
+  buttonState = 0;
+  doubleTapSleep = 0;
+  doubleTapState = 0;
+  holdCounter = 0;
+
+  while (buttonHandler >= 1 && holdCounter < 250) {   //!!!should be ==, >= is for crappy (temporary) debounce!!!
+    doubleTapState = 1;
+    buttonState = digitalRead(button);
+
+    if (buttonState == HIGH) { //Exit on button release
+      buttonHandler = 0;
+      mode++;
+    }
+    if (holdCounter > 248 && powerStatus == 0) {
+      holdCounter = 0;
+      PowerUp();
+    }
+    if (holdCounter > 248 && powerStatus == 1) {
+      holdCounter = 0;
+      PowerDown();
+    }
+    holdCounter++;
+    delay(7);
+  }
+
+  while (doubleTapState == 1) {
+    buttonState = digitalRead(button);
+    if (buttonState == HIGH) {
+      buttonHandler = 0;
+    }
+    doubleTapSleep++;
+    delay(5);
+    if (buttonState == LOW) {
+      doubleTapState = 2;
+      BatteryReport();
+    }
+    if (doubleTapSleep > 30) { //sleep timeout
+      doubleTapState = 0;
+    }
+    if (powerStatus == 0 && doubleTapSleep > 30) {
+      
+      byte wait = 0;
+      while (wait <= 100) {
+        //Serial.println(wait);
+        delay(25);
+        buttonState = digitalRead(button);
+        if (buttonState == LOW) {
+          buttonHandler++;
+          buttonLogic();
+        }
+        analogWrite(ledPin, 10);
+        wait++;
+      }
+      if (powerStatus == 0) {
+        doubleTapState = 0;
+        Sleep();
+      }
+    }
+  }
+}
+
+
+void Power::BatteryReport() {
   mode--;
   mode--;
   analogWrite(ledPin, 0),
@@ -39,7 +117,7 @@ int BatteryReport() {
   }
 }
 
-int BatteryBlink(uint8_t flash, const uint8_t blinkDelay) {
+void Power::BatteryBlink(uint8_t flash, const uint8_t blinkDelay) const {
   while(flash--) {
     analogWrite(ledPin, 255);
     delay(blinkDelay);
@@ -49,7 +127,7 @@ int BatteryBlink(uint8_t flash, const uint8_t blinkDelay) {
   delay(1500);
 }
 
-int PowerUp() {
+void Power::PowerUp() {
   sleep_disable();
   powerStatus = 1;
   mode--;
@@ -67,7 +145,7 @@ int PowerUp() {
   //PSU pullup
 }
 
-int PowerDown() {
+void Power::PowerDown() {
     powerStatus = 0;
   mode--;
   int intensity = 255;
@@ -89,7 +167,7 @@ int PowerDown() {
   */
 }
 
-int Sleep() {
+static void Power::Sleep() {
  
   analogWrite(ledPin, 0);
   // ADCSRA = 0;
