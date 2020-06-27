@@ -98,37 +98,9 @@ void buttonLogic() {
       }
     }
   }
-  ////////////Old Polling Button Code///////////////////
-  /*
-    Monitor preset advancement button and run right preset.
-    static const byte numModes = 3;
-    static const unsigned long buttonPressConfirmationTimeMs = 50;
-
-    static bool pressed = true;
-    static bool lastProcessedPressed = false;
-    static unsigned long eventTimeMs = 0;
-
-
-    int buttonState = digitalRead(buttonPin);
-    if (buttonState == LOW) { // low means the D2 pin is pulledPin to ground aka connect D2 to GND on the arduino
-     if (!pressed) {
-       pressed = true;
-       eventTimeMs = millis() + buttonPressConfirmationTimeMs;
-     }
-    } else {
-     if (pressed) {
-       pressed = false;
-       eventTimeMs = millis() + buttonPressConfirmationTimeMs;
-     }
-    }
-
-    if (lastProcessedPressed != pressed && millis() >= eventTimeMs) {
-     lastProcessedPressed = pressed;
-     pressed && (mode = ++mode % numModes);
-    }
-
-  */
 }
+
+
 
 void modeHandler() {
   if (mode == 1 && powerStatus == 1) {
