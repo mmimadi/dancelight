@@ -6,28 +6,30 @@
 
 #define LOG_MODE false
 
-const byte button = 2;
+const byte button = digitalPinToInterrupt(2);
 
 byte buttonState = 0; //HIGH/LOW
 byte buttonHandler = 0; //Double Tap Variable Count
 byte holdCounter = 0;
 byte doubleTapSleep = 0;
 byte doubleTapState = 0;
-byte blinkDelay = 0;
+Mode* program = NULL;
 
 void setup() {
   Serial.begin(57600);
   pinMode(ledPin, OUTPUT);
-  resetPreset();
   pinMode(button, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(button), iHandler, FALLING);
+  attachInterrupt(button, iHandler, FALLING);
   pinMode(button, INPUT);
   pinMode(batteryPin, INPUT);
+  
+  //test = new RingBufferThresholdBeat();
 }
 
 void loop() {
   buttonLogic();
-  modeHandler();
+  checkCurrentModeChanged();
+  program->loop();
 }
 
 void iHandler() {
@@ -101,24 +103,32 @@ void buttonLogic() {
 }
 
 
+class Pause: public Mode {
+  public:
+    void loop() {};
+};
+class Solid: public Mode {
+  public:
+    Solid::Solid() { analogWrite(ledPin, 255); };
+    void loop() {};
+};
 
-void modeHandler() {
-  if (mode == 1 && powerStatus == 1) {
-    LOG_MODE && Serial.println("mode 1: react to sound");
-    ringBufferLoop(); //use ring buffer beat detection
-
-  } else if (mode == 2 && powerStatus == 1) {
-    LOG_MODE && Serial.println("mode 2: blink");
-    processPreset();
-
-  } else if (mode == 3 && powerStatus == 1) {
-    LOG_MODE && Serial.println("mode 3: solid");
-    analogWrite(ledPin, 255);
-
-  } else if (mode >= 4 && powerStatus == 1) {
-    //Serial.print("Bad mode: ");
-    // Serial.print(mode);
-    //  Serial.println(". Reset to 1.");
+uint8_t lastMode = 0;
+void checkCurrentModeChanged() {
+  //Wrap mode back around, so it loops when you press the button.
+  if (mode >= 4 && powerStatus == 1) {
+    //Serial.print("Unknown mode, "); Serial.print(mode); Serial.println(". Reset to 1.");
     mode = 1;
+  }
+  
+  if (mode == lastMode) { return; }
+  lastMode = mode;
+  
+  delete program;
+  switch (mode) {
+    case 0: program = new Pause();                   break;
+    case 1: program = new RingBufferThresholdBeat(); break;
+    case 2: program = new PresetBlinkPattern();      break;
+    case 3: program = new Solid();                   break;
   }
 }

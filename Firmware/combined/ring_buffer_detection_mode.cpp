@@ -1,53 +1,31 @@
 #include "common.hpp"
 #include "ring_buffer_detection_mode.hpp"
 
-float sampleCounter = 0;
-float micRawValue = 0;
-float processedResult = 0;
-
-const int MODE_INSTANT = 0;
-const int MODE_FADE = 1;
-const int MODE = MODE_FADE;
-
-unsigned long next_blink = 0;
-unsigned long next_beat = 0;
-unsigned int loop_iterations = 0;
-unsigned int rbdm_silence_threshold = 44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
-unsigned int rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
-
-
-unsigned int howBumpingIsIt = 0;
-const unsigned int ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
-
-#define SAMPLE_LENGTH 100
-unsigned int samples[SAMPLE_LENGTH] = {0};
-unsigned int last_sample_index = SAMPLE_LENGTH - 1; //We just filled the array with 0s, so point to the last zero. (Makes initial sample code start from 0 instead of 1, not that it matters.)
-
 //Add a sample to the buffer.
-void addSample(unsigned int sample) {
+void RingBufferThresholdBeat::addSample(unsigned int sample) {
   last_sample_index = ++last_sample_index % SAMPLE_LENGTH;
   samples[last_sample_index] = sample;
 }
 
 //Get the average sample.
-unsigned int averageSample() {
+unsigned int RingBufferThresholdBeat::averageSample() const {
   unsigned int accum = 0;
   for (int i = 0; i < SAMPLE_LENGTH; i++) accum += samples[i];
   return accum / SAMPLE_LENGTH;
 }
 
-int sampleSortCriteria(const void* a, const void* b) {
+static int RingBufferThresholdBeat::sampleSortCriteria(const void* a, const void* b) {
   return *(unsigned int*)a - *(unsigned int*)b;
 }
 
 //Get the top/bottom nth percentile values.
-void findBoundingPercentiles(
+void RingBufferThresholdBeat::findBoundingPercentiles(
   unsigned int& min,
   unsigned int& lower,
   unsigned int& middle,
   unsigned int& upper,
   unsigned int& max
-) {
+) const {
   const unsigned int PERCENTILE_INVERSE = 20; //3 = 33%, 5 = 20%, 10 = 10%, etc.
   static unsigned int sortedSamples[SAMPLE_LENGTH] = {0};
   memcpy(sortedSamples, samples, SAMPLE_LENGTH * sizeof(samples[0]));
@@ -61,19 +39,21 @@ void findBoundingPercentiles(
 }
 
 
-void ringBufferLoop() {
+void RingBufferThresholdBeat::loop() {
   const float threshold = 0.9; //0..1 of max value in buffer
   auto sample = analogRead(micInputPin); //0..16000-ish, I think?
 
   unsigned int min, lower, middle, upper, max;
   findBoundingPercentiles(min, lower, middle, upper, max);
   
-  Serial.print("max "); Serial.print(max); Serial.print(", ");
-  Serial.print("min "); Serial.print(min); Serial.print(", ");
-  Serial.print("lower "); Serial.print(lower); Serial.print(", ");
-  Serial.print("upper "); Serial.print(upper); Serial.print(", ");
-  Serial.print("middle "); Serial.print(middle); Serial.print(", ");
-  Serial.print("sample "); Serial.print(sample); Serial.println("");
+  if (LOG_LEVELS) {
+    Serial.print("max "); Serial.print(max); Serial.print(", ");
+    Serial.print("min "); Serial.print(min); Serial.print(", ");
+    Serial.print("lower "); Serial.print(lower); Serial.print(", ");
+    Serial.print("upper "); Serial.print(upper); Serial.print(", ");
+    Serial.print("middle "); Serial.print(middle); Serial.print(", ");
+    Serial.print("sample "); Serial.print(sample); Serial.println("");
+  }
   
   auto average = averageSample();
 
@@ -91,12 +71,12 @@ void ringBufferLoop() {
   loop_iterations++;
 }
 
-void writeAndDelay(unsigned int brightness, unsigned int ms) {
+void RingBufferThresholdBeat::writeAndDelay(unsigned int brightness, unsigned int ms) {
   analogWrite(ledPin, brightness * 190 / 255);
   next_blink = millis() + ms;
 }
 
-void SoundFadeDelayless() {
+void RingBufferThresholdBeat::SoundFadeDelayless() {
   if (millis() >= next_blink) {
     if (MODE == MODE_INSTANT) {
       switch (howBumpingIsIt) {

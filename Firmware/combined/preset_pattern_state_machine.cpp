@@ -1,15 +1,13 @@
 #include "common.hpp"
+#include "preset_pattern_state_machine.hpp"
 
-#define LOG_SEEK false
-#define LOG_EXEC false
 
-#define END 0
-#define START 1
-#define BLINK 2
-#define UBLINK 3
-#define REPEAT 4
+PresetBlinkPattern::PresetBlinkPattern() {
+  resetPreset();
+};
 
-static const unsigned short int pattern_data[] PROGMEM = {
+
+static const unsigned short int PresetBlinkPattern::pattern_data[] PROGMEM = {
   START,  0, BLINK, 255, 10000,
   START,  0, BLINK, 255, 100, BLINK, 0, 50, REPEAT, 6, 4,
   START,  0, UBLINK, 255, 1000, UBLINK, 0, 10000, REPEAT, 6, 200,
@@ -50,21 +48,9 @@ static const unsigned short int pattern_data[] PROGMEM = {
 
   END,
 };
-unsigned short int patterns(unsigned short int i) {
-  return pgm_read_word(&pattern_data[i]);
-}
-
-unsigned int pc; //Preset Counter
-unsigned int pRepeat; //Repeat Counter
 
 
-void resetPreset() {
-  //Serial.println("reset presets");
-  pc = 0;
-  pRepeat = 0;
-}
-
-void selectRandomPreset() {
+void PresetBlinkPattern::selectRandomPreset() {
   short int increment = random(0, 200);
   LOG_SEEK && Serial.print("s: seeking preset +");
   LOG_SEEK && Serial.println(increment);
@@ -98,7 +84,7 @@ void selectRandomPreset() {
   }
 }
 
-void processPreset() {
+void PresetBlinkPattern::loop() {
   LOG_EXEC && Serial.print("p: command ");
   LOG_EXEC && Serial.print(patterns(pc));
   LOG_EXEC && Serial.print("@");

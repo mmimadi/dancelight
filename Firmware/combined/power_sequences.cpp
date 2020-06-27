@@ -7,7 +7,6 @@ float batteryVoltage = 0;
 int BatteryReport() {
   mode--;
   mode--;
-  // blinkDelay = 0;
   analogWrite(ledPin, 0),
               delay(1000);
   batteryVoltage = analogRead(batteryPin);
