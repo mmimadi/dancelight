@@ -1,13 +1,14 @@
 #include "common.hpp"
-#include "preset_pattern_state_machine.hpp"
 #include "power_sequences.hpp"
-#include "ring_buffer_detection_mode.hpp"
+#include "preset_pattern_state_machine.hpp"
+//#include "ring_buffer_detection_mode.hpp"
+#include "goertzel_detection_mode.hpp"
 
 Power power = Power();
 Mode* program = NULL; //how we're blinking, what mode
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(115200);
   power.setup();
 }
 
@@ -42,7 +43,7 @@ void checkCurrentModeChanged() {
   delete program;
   switch (power.mode) {
     case 0: program = new Pause();                   break;
-    case 1: program = new RingBufferThresholdBeat(); break;
+    case 1: program = new GoertzelBeat();            break;
     case 2: program = new PresetBlinkPattern();      break;
     case 3: program = new Solid();                   break;
   }

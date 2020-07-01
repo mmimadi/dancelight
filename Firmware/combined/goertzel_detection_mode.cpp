@@ -1,31 +1,44 @@
 #include "common.hpp"
-#include "ring_buffer_detection_mode.hpp"
+#include "goertzel_detection_mode.hpp"
+#include "libgoertzel.hpp"
 
-//RingBufferThresholdBeat
-static const int RingBufferThresholdBeat::MODE = RingBufferThresholdBeat::MODE_FADE;
-static const bool RingBufferThresholdBeat::LOG_LEVELS = true;
-static const unsigned int RingBufferThresholdBeat::rbdm_silence_threshold = 15;//44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
-static const unsigned int RingBufferThresholdBeat::rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
+//GoertzelBeat
+static const int GoertzelBeat::MODE = GoertzelBeat::MODE_FADE;
+static const bool GoertzelBeat::LOG_LEVELS = true;
+static const unsigned int GoertzelBeat::rbdm_silence_threshold = 15; //44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
+static const unsigned int GoertzelBeat::rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
+
+GoertzelBeat::GoertzelBeat() {
+  const float sample_frequency = 2000.0; //TODO: Determine experimentally.
+  freq075hz = new Goertzel((float)  75.0, (float) SAMPLE_LENGTH, sample_frequency);
+  freq150hz = new Goertzel((float) 150.0, (float) SAMPLE_LENGTH, sample_frequency);
+  freq300hz = new Goertzel((float) 300.0, (float) SAMPLE_LENGTH, sample_frequency);
+}
+GoertzelBeat::~GoertzelBeat() {
+  delete &freq075hz;
+  delete &freq150hz;
+  delete &freq300hz;
+}
 
 //Add a sample to the buffer.
-void RingBufferThresholdBeat::addSample(unsigned int sample) {
+void GoertzelBeat::addSample(unsigned int sample) {
   last_sample_index = ++last_sample_index % SAMPLE_LENGTH;
   samples[last_sample_index] = sample;
 }
 
 //Get the average sample.
-unsigned int RingBufferThresholdBeat::averageSample() const {
+unsigned int GoertzelBeat::averageSample() const {
   unsigned int accum = 0;
   for (int i = 0; i < SAMPLE_LENGTH; i++) accum += samples[i];
   return accum / SAMPLE_LENGTH;
 }
 
-static int RingBufferThresholdBeat::sampleSortCriteria(const void* a, const void* b) {
+static int GoertzelBeat::sampleSortCriteria(const void* a, const void* b) {
   return *(unsigned int*)a - *(unsigned int*)b;
 }
 
 //Get the top/bottom nth percentile values.
-void RingBufferThresholdBeat::findBoundingPercentiles(
+void GoertzelBeat::findBoundingPercentiles(
   unsigned int& min,
   unsigned int& lower,
   unsigned int& middle,
@@ -45,7 +58,7 @@ void RingBufferThresholdBeat::findBoundingPercentiles(
 }
 
 
-void RingBufferThresholdBeat::loop() {
+void GoertzelBeat::loop() {
   const float threshold = 0.9; //0..1 of max value in buffer
   auto sample = analogRead(micInputPin); //0..16000-ish, I think?
 
@@ -77,12 +90,12 @@ void RingBufferThresholdBeat::loop() {
   loop_iterations++;
 }
 
-void RingBufferThresholdBeat::writeAndDelay(unsigned int brightness, unsigned int ms) {
+void GoertzelBeat::writeAndDelay(unsigned int brightness, unsigned int ms) {
   analogWrite(ledPin, brightness * 190 / 255);
   next_blink = millis() + ms;
 }
 
-void RingBufferThresholdBeat::SoundFadeDelayless() {
+void GoertzelBeat::SoundFadeDelayless() {
   if (millis() >= next_blink) {
     if (MODE == MODE_INSTANT) {
       switch (howBumpingIsIt) {

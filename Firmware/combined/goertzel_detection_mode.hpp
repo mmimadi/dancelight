@@ -1,11 +1,31 @@
-class RingBufferThresholdBeat: public Mode {
+#include "libgoertzel.hpp"
+
+class GoertzelBeat: public Mode {
   public:
+    GoertzelBeat::GoertzelBeat();
+    GoertzelBeat::~GoertzelBeat();
     void loop();
   
   private:
     float sampleCounter = 0;
     float micRawValue = 0;
     float processedResult = 0;
+    
+    //upper, lower, and middle components.
+    //120 o---------------o
+    //    |      o        |
+    //    | o   o     o   | --- upper (100, avg. of above-midddle samples)
+    //    |o o      oo o  | --- middle (90, avg. of all samples)
+    //    |   o    o      |
+    //    |    o        oo| --- lower (70,  avg. of below-middle samples)
+    // 60 o---------------o
+    float avg_upper = 0;
+    float avg_mid = 0;
+    float avg_lower = 0;
+    
+    Goertzel freq075hz;
+    Goertzel freq150hz;
+    Goertzel freq300hz;
 
     static const int MODE_INSTANT = 0;
     static const int MODE_FADE = 1;
@@ -15,7 +35,7 @@ class RingBufferThresholdBeat: public Mode {
     unsigned long next_blink = 0;
     unsigned long next_beat = 0;
     unsigned int loop_iterations = 0;
-    static const unsigned int rbdm_silence_threshold;//44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
+    static const unsigned int rbdm_silence_threshold; //44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
     static const unsigned int rbdm_min_beat_delay_ms; //10 bps, or detect at most 600bpm.
 
     unsigned int howBumpingIsIt = 0;
