@@ -23,9 +23,9 @@ class GoertzelBeat: public Mode {
     float avg_mid = 0;
     float avg_lower = 0;
     
-    Goertzel freq075hz;
-    Goertzel freq150hz;
-    Goertzel freq300hz;
+    Goertzel* freq075hz;
+    Goertzel* freq150hz;
+    Goertzel* freq300hz;
 
     static const int MODE_INSTANT = 0;
     static const int MODE_FADE = 1;
