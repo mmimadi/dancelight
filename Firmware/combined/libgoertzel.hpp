@@ -33,8 +33,7 @@ class Goertzel
 {
   public:
   Goertzel(float,float,float);
-	void sample(uint8_t, uint8_t testData[]);
-	float detect(uint8_t testData[]);
+	float detect(unsigned int testData[], float adcCenter);
 
   private:
   float _SAMPLING_FREQUENCY = 0;
@@ -44,7 +43,7 @@ class Goertzel
   float Q1 = 0;
   float Q2 = 0;
   
-	void ProcessSample(uint8_t sample, uint8_t adcCenter);
+	void ProcessSample(uint8_t sample, float adcCenter);
 	void Goertzel::ResetGoertzel(void);
 };
 

@@ -49,28 +49,20 @@ void Goertzel::ResetGoertzel(void) {
 
 
 /* Call this routine for every sample. */
-void Goertzel::ProcessSample(uint8_t sample, uint8_t adcCenter) {
+void Goertzel::ProcessSample(uint8_t sample, float adcCenter) {
   float Q0;
-  Q0 = coeff * Q1 - Q2 + ((float) sample - (float) adcCenter);
+  Q0 = coeff * Q1 - Q2 + ((float) sample - adcCenter);
   Q2 = Q1;
   Q1 = Q0;
 }
 
 
-/* Sample some test data. */
-void Goertzel::sample(uint8_t sensorPin, uint8_t testData[]) {
-  for (int index = 0; index < _N; index++) {
-    testData[index] = analogRead(sensorPin);
-  }
-}
-
-
-float Goertzel::detect(uint8_t testData[]) {
+float Goertzel::detect(unsigned int testData[], float adcCenter) {
   float	magnitude;
 
   /* Process the samples. */
   for (int index = 0; index < _N; index++) {
-    ProcessSample(testData[index], 60); //DDR 2020-06-30: 60 is placeholder, best guess atm, will change in final hardware - cornflakes, update this!
+    ProcessSample(testData[index], adcCenter); //DDR 2020-06-30: 60 is placeholder, best guess atm, will change in final hardware - cornflakes, update this!
   }
 
   /* Do the "standard Goertzel" processing. */

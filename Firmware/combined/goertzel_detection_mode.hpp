@@ -2,8 +2,8 @@
 
 class GoertzelBeat: public Mode {
   public:
-    GoertzelBeat::GoertzelBeat();
-    GoertzelBeat::~GoertzelBeat();
+    GoertzelBeat();
+    ~GoertzelBeat();
     void loop();
   
   private:
@@ -11,14 +11,15 @@ class GoertzelBeat: public Mode {
     float micRawValue = 0;
     float processedResult = 0;
     
-    //upper, lower, and middle components.
-    //120 o---------------o
-    //    |      o        |
-    //    | o   o     o   | --- upper (100, avg. of above-midddle samples)
-    //    |o o      oo o  | --- middle (90, avg. of all samples)
-    //    |   o    o      |
-    //    |    o        oo| --- lower (70,  avg. of below-middle samples)
-    // 60 o---------------o
+    // upper, lower, and middle components of frequency. (To yield volume, baseline, and skew.)
+    // ex., graph of samples over time:
+    // 120 o---------------o
+    //     |      o        |
+    //     | o   o     o   | --- avg_upper (100, avg. of above-midddle samples)
+    //     |o o      oo o  | --- avg_mid (90, avg. of all samples)
+    //     |   o    o      |
+    //     |    o        oo| --- avg_lower (70,  avg. of below-middle samples)
+    //  60 o---------------o
     float avg_upper = 0;
     float avg_mid = 0;
     float avg_lower = 0;

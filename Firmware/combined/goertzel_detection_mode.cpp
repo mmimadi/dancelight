@@ -4,12 +4,12 @@
 
 //GoertzelBeat
 static const int GoertzelBeat::MODE = GoertzelBeat::MODE_FADE;
-static const bool GoertzelBeat::LOG_LEVELS = true;
+static const bool GoertzelBeat::LOG_LEVELS = false;
 static const unsigned int GoertzelBeat::rbdm_silence_threshold = 15; //44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
 static const unsigned int GoertzelBeat::rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
 
 GoertzelBeat::GoertzelBeat() {
-  const float sample_frequency = 2000.0; //TODO: Determine experimentally.
+  const float sample_frequency = 1000.0; //TODO: Determine experimentally.
   freq075hz = new Goertzel((float)  75.0, (float) SAMPLE_LENGTH, sample_frequency);
   freq150hz = new Goertzel((float) 150.0, (float) SAMPLE_LENGTH, sample_frequency);
   freq300hz = new Goertzel((float) 300.0, (float) SAMPLE_LENGTH, sample_frequency);
@@ -33,59 +33,46 @@ unsigned int GoertzelBeat::averageSample() const {
   return accum / SAMPLE_LENGTH;
 }
 
-static int GoertzelBeat::sampleSortCriteria(const void* a, const void* b) {
-  return *(unsigned int*)a - *(unsigned int*)b;
-}
-
-//Get the top/bottom nth percentile values.
-void GoertzelBeat::findBoundingPercentiles(
-  unsigned int& min,
-  unsigned int& lower,
-  unsigned int& middle,
-  unsigned int& upper,
-  unsigned int& max
-) const {
-  const unsigned int PERCENTILE_INVERSE = 20; //3 = 33%, 5 = 20%, 10 = 10%, etc.
-  static unsigned int sortedSamples[SAMPLE_LENGTH] = {0};
-  memcpy(sortedSamples, samples, SAMPLE_LENGTH * sizeof(samples[0]));
-  qsort(sortedSamples, SAMPLE_LENGTH, sizeof(samples[0]), sampleSortCriteria);
-
-  min = sortedSamples[0];
-  lower = sortedSamples[SAMPLE_LENGTH / PERCENTILE_INVERSE];
-  middle = sortedSamples[SAMPLE_LENGTH / 2];
-  upper = sortedSamples[SAMPLE_LENGTH - SAMPLE_LENGTH / PERCENTILE_INVERSE];
-  max = sortedSamples[SAMPLE_LENGTH - 1];
-}
-
 
 void GoertzelBeat::loop() {
-  const float threshold = 0.9; //0..1 of max value in buffer
   auto sample = analogRead(micInputPin); //0..16000-ish, I think?
-
-  unsigned int min, lower, middle, upper, max;
-  findBoundingPercentiles(min, lower, middle, upper, max);
+  
+  
+  //Cornflakes' approach - much cheaper to compute than the sorted ring buffer.
+  float factor = 0.05;
+  float avg_mid = avg_mid * (1-factor) + (float) sample * factor;
+  if (sample > avg_mid) {
+    avg_upper = avg_upper * (1-factor) + (float) sample * factor;
+  } else if (sample < avg_mid) {
+    avg_lower = avg_lower * (1-factor) + (float) sample * factor;
+  }
+  
+  float s1 = freq075hz->detect(samples, avg_mid);
+  float s2 = freq150hz->detect(samples, avg_mid);
+  float s3 = freq300hz->detect(samples, avg_mid);
   
   if (LOG_LEVELS) {
-    Serial.print("max "); Serial.print(max); Serial.print(", ");
-    Serial.print("min "); Serial.print(min); Serial.print(", ");
-    Serial.print("lower "); Serial.print(lower); Serial.print(", ");
-    Serial.print("upper "); Serial.print(upper); Serial.print(", ");
-    Serial.print("middle "); Serial.print(middle); Serial.print(", ");
-    Serial.print("sample "); Serial.print(sample); Serial.println("");
+    Serial.print("sample "); Serial.print((float) sample); Serial.print(", ");
+    //Serial.print("avg_mid "); Serial.print(avg_mid); Serial.print(", ");
+    //Serial.print("avg_upper "); Serial.print(avg_upper); Serial.print(", ");
+    //Serial.print("avg_lower "); Serial.print(avg_lower); Serial.print(", ");
+    Serial.print("s1 "); Serial.print(s1); Serial.print(", ");
+    Serial.print("s2 "); Serial.print(s2); Serial.print(", ");
+    Serial.print("s3 "); Serial.print(s3); Serial.print(", ");
+    Serial.println();
   }
-  
-  auto average = averageSample();
 
-  if ((sample > upper || sample < lower) && upper - lower > rbdm_silence_threshold && millis() > next_beat) {
-    howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
-    //Serial.print("beat 120");
-    next_beat = millis() + rbdm_min_beat_delay_ms;
-  } else {
-    //Serial.println("beat 80");
-  }
-  if (howBumpingIsIt) SoundFadeDelayless();
+  //if ((sample > upper || sample < lower) && upper - lower > rbdm_silence_threshold && millis() > next_beat) {
+  //  howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
+  //  //Serial.print("beat 120");
+  //  next_beat = millis() + rbdm_min_beat_delay_ms;
+  //} else {
+  //  //Serial.println("beat 80");
+  //}
+  //if (howBumpingIsIt) SoundFadeDelayless();
+  analogWrite(ledPin, s1/2);
 
-  if (!(loop_iterations % 2)) addSample(sample);
+  addSample(sample);
   //addSample(sample);
   loop_iterations++;
 }
