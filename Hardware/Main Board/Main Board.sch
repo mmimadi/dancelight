@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:Main Board-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -486,17 +485,6 @@ F 3 "" H 1060 4120 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Connection ~ 890  2580
-Connection ~ 1105 2580
-Wire Wire Line
-	1105 2580 890  2580
-Wire Wire Line
-	2040 2580 2040 2845
-Wire Wire Line
-	1695 2580 2040 2580
-Wire Wire Line
-	1105 2580 1105 2970
-Wire Wire Line
-	1395 2580 1148 2580
 $Comp
 L Device:L_Core_Iron L1
 U 1 1 5EDC6B02
@@ -508,8 +496,6 @@ F 3 "~" H 1545 2580 50  0001 C CNN
 	1    1545 2580
 	0    1    -1   0   
 $EndComp
-Wire Wire Line
-	1390 2970 1105 2970
 $Comp
 L power:GNDPWR #PWR03
 U 1 1 5EF7E5EB
@@ -524,38 +510,16 @@ $EndComp
 $Comp
 L power:GNDPWR #PWR06
 U 1 1 5EF83271
-P 2125 2970
-F 0 "#PWR06" H 2125 2770 50  0001 C CNN
-F 1 "GNDPWR" H 2115 3015 50  0000 C CNN
-F 2 "" H 2125 2920 50  0001 C CNN
-F 3 "" H 2125 2920 50  0001 C CNN
-	1    2125 2970
+P 2125 2945
+F 0 "#PWR06" H 2125 2745 50  0001 C CNN
+F 1 "GNDPWR" H 2200 2985 50  0000 C CNN
+F 2 "" H 2125 2895 50  0001 C CNN
+F 3 "" H 2125 2895 50  0001 C CNN
+	1    2125 2945
 	1    0    0    -1  
-$EndComp
-$Comp
-L New_Library:MT3608 U1
-U 1 1 5EDAF2E5
-P 2640 1945
-F 0 "U1" H 3655 1250 50  0000 C CNN
-F 1 "MT3608" H 3555 1180 50  0000 C CNN
-F 2 "Package_TO_SOT_SMD:SOT-23-6" H 3940 1095 50  0001 C CNN
-F 3 "" H 3940 1095 50  0001 C CNN
-	1    2640 1945
-	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	2040 2970 2125 2970
-$Comp
-L power:GNDA #PWR08
-U 1 1 5EF94857
-P 2430 3295
-F 0 "#PWR08" H 2430 3045 50  0001 C CNN
-F 1 "GNDA" H 2435 3122 50  0000 C CNN
-F 2 "" H 2430 3295 50  0001 C CNN
-F 3 "" H 2430 3295 50  0001 C CNN
-	1    2430 3295
-	1    0    0    -1  
-$EndComp
+	2040 2945 2125 2945
 $Comp
 L power:+10V #PWR010
 U 1 1 5EF7B517
@@ -620,9 +584,6 @@ Wire Wire Line
 Wire Wire Line
 	2430 2580 2430 2585
 Connection ~ 2430 2580
-Wire Wire Line
-	2085 2580 2040 2580
-Connection ~ 2040 2580
 Connection ~ 2430 3095
 Wire Wire Line
 	2430 2580 2430 2895
@@ -901,8 +862,6 @@ Wire Wire Line
 	6810 4200 6345 4200
 Text Label 6345 4200 0    50   ~ 0
 MODE
-Wire Wire Line
-	8010 4000 8475 4000
 Text Label 8480 4200 2    50   ~ 0
 MAIN_POWER
 Wire Wire Line
@@ -924,8 +883,6 @@ F 3 "" H 5730 3310 50  0001 C CNN
 	1    5730 3310
 	1    0    0    -1  
 $EndComp
-Text Label 8475 4000 2    50   ~ 0
-PRMG
 $Comp
 L Device:R_Small R8
 U 1 1 5F2B9B1E
@@ -1085,8 +1042,6 @@ Wire Wire Line
 	5675 2360 5675 2580
 Wire Wire Line
 	2975 2355 2975 2580
-Text Notes 590  1380 0    50   ~ 0
-Design Requirements:\n\nR15 & R16 Close to U1. Feedback line short as possible. Short and wide traces\n\nC8 & C9 close to U2\n\nC10 & C11 close to U3\n\nC6 as close to pre amp as possible\n\n
 $Comp
 L Device:C_Small C7
 U 1 1 5EF7EC11
@@ -1174,11 +1129,6 @@ Connection ~ 3765 2580
 Wire Wire Line
 	3765 2580 4062 2580
 Wire Wire Line
-	1148 2092 1148 2580
-Connection ~ 1148 2580
-Wire Wire Line
-	1148 2580 1105 2580
-Wire Wire Line
 	4662 2580 4774 2580
 Connection ~ 4805 2580
 Wire Wire Line
@@ -1199,7 +1149,7 @@ U 1 1 5EC19F82
 P 4362 2680
 F 0 "U2" H 4242 2985 50  0000 C CNN
 F 1 "NCP718A" H 4357 2910 50  0000 C CNN
-F 2 "Main Board:wdfn" H 4362 3005 50  0001 C CNN
+F 2 "Footprints:SON65P200X200X80-7N" H 4362 3005 50  0001 C CNN
 F 3 "https://www.onsemi.com/pub/Collateral/NCP718-D.PDF" H 4362 2780 50  0001 C CNN
 	1    4362 2680
 	1    0    0    -1  
@@ -1225,26 +1175,7 @@ F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/40001912A.pdf" H 7410 4400 
 	1    7410 4400
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	8010 4100 8475 4100
-Text Label 8475 4100 2    50   ~ 0
-PACK_SENSE
-$Comp
-L Connector:TestPoint TP3
-U 1 1 5EEBD8E0
-P 5310 4530
-F 0 "TP3" V 5305 4985 50  0000 C CNN
-F 1 "UDPI" V 5305 4795 50  0000 C CNN
-F 2 "TestPoint:TestPoint_Pad_D2.5mm" H 5510 4530 50  0001 C CNN
-F 3 "~" H 5510 4530 50  0001 C CNN
-	1    5310 4530
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	5310 4530 5500 4530
-Text Label 5500 4530 2    50   ~ 0
-PRGM
-NoConn ~ 1388 2844
+NoConn ~ 1390 2795
 Wire Wire Line
 	1148 2092 3718 2092
 $Comp
@@ -1303,26 +1234,13 @@ F 3 "~" H 1260 5270 50  0001 C CNN
 	1    1060 5270
 	1    0    0    -1  
 $EndComp
-Text Notes 9155 2535 0    50   ~ 0
-Regulated power going here\n
-$Comp
-L Connector:TestPoint TP10
-U 1 1 5EFA75EC
-P 6955 2785
-F 0 "TP10" V 6955 3310 50  0000 C CNN
-F 1 "B-" V 6944 3000 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_3.0x3.0mm_Drill1.5mm" H 7155 2785 50  0001 C CNN
-F 3 "~" H 7155 2785 50  0001 C CNN
-	1    6955 2785
-	0    -1   -1   0   
-$EndComp
 $Comp
 L Connector:TestPoint TP9
 U 1 1 5EFA68BA
 P 6955 2635
 F 0 "TP9" V 6955 3185 50  0000 C CNN
 F 1 "B+" V 6970 2845 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_3.0x3.0mm_Drill1.5mm" H 7155 2635 50  0001 C CNN
+F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 7155 2635 50  0001 C CNN
 F 3 "~" H 7155 2635 50  0001 C CNN
 	1    6955 2635
 	0    -1   -1   0   
@@ -1383,7 +1301,7 @@ U 1 1 5EFE6C1E
 P 8855 2785
 F 0 "TP13" V 8880 3235 50  0000 C CNN
 F 1 "P-" V 8880 3010 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_3.0x3.0mm_Drill1.5mm" H 9055 2785 50  0001 C CNN
+F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 9055 2785 50  0001 C CNN
 F 3 "~" H 9055 2785 50  0001 C CNN
 	1    8855 2785
 	0    -1   -1   0   
@@ -1394,7 +1312,7 @@ U 1 1 5EFDD1A0
 P 8855 2610
 F 0 "TP12" V 8880 3060 50  0000 C CNN
 F 1 "P+" V 8880 2835 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_3.0x3.0mm_Drill1.5mm" H 9055 2610 50  0001 C CNN
+F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 9055 2610 50  0001 C CNN
 F 3 "~" H 9055 2610 50  0001 C CNN
 	1    8855 2610
 	0    -1   -1   0   
@@ -1443,4 +1361,109 @@ F 3 "~" H 7380 2910 50  0001 C CNN
 $EndComp
 Text Notes 7946 1966 0    50   ~ 0
 Charger Module
+$Comp
+L Connector:TestPoint TP16
+U 1 1 5F00E156
+P 9930 2870
+F 0 "TP16" V 9995 3255 50  0000 C CNN
+F 1 "Support" V 9930 3190 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 10130 2870 50  0001 C CNN
+F 3 "~" H 10130 2870 50  0001 C CNN
+	1    9930 2870
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector:TestPoint TP17
+U 1 1 5F011826
+P 9935 3075
+F 0 "TP17" V 10000 3460 50  0000 C CNN
+F 1 "Support" V 9935 3395 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 10135 3075 50  0001 C CNN
+F 3 "~" H 10135 3075 50  0001 C CNN
+	1    9935 3075
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector:TestPoint TP10
+U 1 1 5EFA75EC
+P 6955 2785
+F 0 "TP10" V 6955 3310 50  0000 C CNN
+F 1 "B-" V 6944 3000 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 7155 2785 50  0001 C CNN
+F 3 "~" H 7155 2785 50  0001 C CNN
+	1    6955 2785
+	0    -1   -1   0   
+$EndComp
+$Comp
+L New_Library:MT3608 U1
+U 1 1 5EDAF2E5
+P 2640 1945
+F 0 "U1" H 3655 1250 50  0000 C CNN
+F 1 "MT3608" H 3555 1180 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-6" H 3940 1095 50  0001 C CNN
+F 3 "" H 3940 1095 50  0001 C CNN
+	1    2640 1945
+	-1   0    0    -1  
+$EndComp
+Text Label 8475 4100 2    50   ~ 0
+PACK_SENSE
+NoConn ~ 9930 2870
+NoConn ~ 9935 3075
+Wire Wire Line
+	1390 2945 1115 2945
+Wire Wire Line
+	1115 2945 1115 2580
+Wire Wire Line
+	890  2580 1115 2580
+Connection ~ 1115 2580
+Connection ~ 1148 2580
+Wire Wire Line
+	1115 2580 1148 2580
+Wire Wire Line
+	1395 2580 1148 2580
+Wire Wire Line
+	1148 2092 1148 2580
+Wire Wire Line
+	2040 2795 2040 2580
+Wire Wire Line
+	1695 2580 2040 2580
+Wire Wire Line
+	2040 2580 2085 2580
+Connection ~ 2040 2580
+Wire Wire Line
+	8010 4100 8475 4100
+Wire Wire Line
+	8010 4000 8475 4000
+Wire Wire Line
+	5310 4530 5500 4530
+$Comp
+L Connector:TestPoint TP3
+U 1 1 5EEBD8E0
+P 5310 4530
+F 0 "TP3" V 5305 4985 50  0000 C CNN
+F 1 "UDPI" V 5305 4795 50  0000 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.5mm" H 5510 4530 50  0001 C CNN
+F 3 "~" H 5510 4530 50  0001 C CNN
+	1    5310 4530
+	0    -1   -1   0   
+$EndComp
+Text Label 8475 4000 2    50   ~ 0
+PRGM
+Text Label 5500 4530 2    50   ~ 0
+PRGM
+Text Notes 9155 2535 0    50   ~ 0
+Regulated power going here\n
+Text Notes 590  1380 0    50   ~ 0
+Design Requirements:\n\nR15 & R16 Close to U1. Feedback line short as possible. Short and wide traces\n\nC8 & C9 close to U2\n\nC10 & C11 close to U3\n\nC6 as close to pre amp as possible\n\n
+$Comp
+L power:GNDPWR #PWR0102
+U 1 1 5F1F8B1A
+P 2430 3295
+F 0 "#PWR0102" H 2430 3095 50  0001 C CNN
+F 1 "GNDPWR" H 2445 3115 50  0000 C CNN
+F 2 "" H 2430 3245 50  0001 C CNN
+F 3 "" H 2430 3245 50  0001 C CNN
+	1    2430 3295
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
