@@ -3,6 +3,7 @@
 #include "preset_pattern_state_machine.hpp"
 //#include "ring_buffer_detection_mode.hpp"
 #include "goertzel_detection_mode.hpp"
+#include "bandpass_filter_beat.hpp"
 
 Power power = Power();
 Mode* program = NULL; //how we're blinking, what mode
@@ -43,7 +44,7 @@ void checkCurrentModeChanged() {
   delete program;
   switch (power.mode) {
     case 0: program = new Pause();                   break;
-    case 1: program = new GoertzelBeat();            break;
+    case 1: program = new BandpassFilterBeat();      break;
     case 2: program = new PresetBlinkPattern();      break;
     case 3: program = new Solid();                   break;
   }
