@@ -275,17 +275,6 @@ Wire Wire Line
 Wire Wire Line
 	3115 6365 3115 6075
 $Comp
-L Transistor_FET:CSD16342Q5A Q3
-U 1 1 5EC1B2F5
-P 4745 6425
-F 0 "Q3" V 4994 6425 50  0000 C CNN
-F 1 "A04484" V 5085 6425 50  0000 C CNN
-F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 4945 6350 50  0001 L CIN
-F 3 "http://www.ti.com/lit/gpn/csd16342q5a" V 4745 6425 50  0001 L CNN
-	1    4745 6425
-	0    1    1    0   
-$EndComp
-$Comp
 L Device:R_Small R20
 U 1 1 5EC41317
 P 4475 6225
@@ -296,8 +285,6 @@ F 3 "~" H 4475 6225 50  0001 C CNN
 	1    4475 6225
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	4575 6225 4745 6225
 Wire Wire Line
 	4375 6225 4295 6225
 $Comp
@@ -594,7 +581,7 @@ Wire Wire Line
 Wire Wire Line
 	1260 3395 2125 3395
 Text Label 2125 3395 2    50   ~ 0
-MAIN_POWER
+EN
 $Comp
 L Device:L_Core_Iron L2
 U 1 1 5F1204AE
@@ -848,22 +835,22 @@ F 3 "~" H 6190 3685 50  0001 C CNN
 $EndComp
 Text Label 6345 4300 0    50   ~ 0
 LED
-Text Label 6345 4000 0    50   ~ 0
+Text Label 8475 4300 2    50   ~ 0
 MIC_IN
-Text Label 6345 4100 0    50   ~ 0
+Text Label 8475 4400 2    50   ~ 0
 TEMP_SENSE
 Wire Wire Line
-	6345 4100 6810 4100
+	8475 4400 8010 4400
 Wire Wire Line
 	6345 4300 6810 4300
 Wire Wire Line
-	6345 4000 6810 4000
+	8475 4300 8010 4300
 Wire Wire Line
-	6810 4200 6345 4200
-Text Label 6345 4200 0    50   ~ 0
+	8010 4200 8475 4200
+Text Label 8475 4200 2    50   ~ 0
 MODE
-Text Label 8480 4200 2    50   ~ 0
-MAIN_POWER
+Text Label 8915 4500 2    50   ~ 0
+EN
 Wire Wire Line
 	7410 5100 7410 5180
 Wire Wire Line
@@ -886,31 +873,18 @@ $EndComp
 $Comp
 L Device:R_Small R8
 U 1 1 5F2B9B1E
-P 8920 4310
-F 0 "R8" H 8985 4280 50  0000 L CNN
-F 1 "1M" H 8990 4345 50  0000 L CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" H 8920 4310 50  0001 C CNN
-F 3 "~" H 8920 4310 50  0001 C CNN
-	1    8920 4310
+P 8920 4610
+F 0 "R8" H 8985 4580 50  0000 L CNN
+F 1 "1M" H 8990 4645 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 8920 4610 50  0001 C CNN
+F 3 "~" H 8920 4610 50  0001 C CNN
+	1    8920 4610
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	8920 4200 8920 4210
+	8920 4500 8920 4510
 Wire Wire Line
-	8010 4200 8920 4200
-$Comp
-L power:GNDA #PWR028
-U 1 1 5F2D1230
-P 8920 5195
-F 0 "#PWR028" H 8920 4945 50  0001 C CNN
-F 1 "GNDA" H 8925 5022 50  0000 C CNN
-F 2 "" H 8920 5195 50  0001 C CNN
-F 3 "" H 8920 5195 50  0001 C CNN
-	1    8920 5195
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8920 4410 8920 5195
+	8010 4500 8920 4500
 $Comp
 L power:GNDA #PWR025
 U 1 1 5F2DDF4B
@@ -1068,17 +1042,6 @@ Connection ~ 1285 6355
 Wire Wire Line
 	1285 6555 1285 6565
 $Comp
-L Connector:TestPoint TP6
-U 1 1 5EF8751F
-P 770 4195
-F 0 "TP6" H 788 4508 50  0000 C CNN
-F 1 "3V" H 780 4420 50  0000 C CNN
-F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 970 4195 50  0001 C CNN
-F 3 "~" H 970 4195 50  0001 C CNN
-	1    770  4195
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C_Small C12
 U 1 1 5EE38BEE
 P 890 2680
@@ -1093,7 +1056,6 @@ Wire Wire Line
 	770  4195 1060 4195
 Wire Wire Line
 	890  2350 890  2580
-Connection ~ 770  4195
 $Comp
 L Connector:TestPoint TP8
 U 1 1 5EF8F245
@@ -1111,14 +1073,10 @@ Wire Wire Line
 Text Notes 1555 6560 0    50   ~ 0
 OPTIONAL\n
 NoConn ~ 8010 4700
-NoConn ~ 8010 4600
-NoConn ~ 8010 4500
-NoConn ~ 8010 4400
-NoConn ~ 8010 4300
 Wire Wire Line
 	4362 2980 4362 3292
 Text Label 4000 3176 1    50   ~ 0
-MAIN_POWER
+EN
 Wire Wire Line
 	4062 2680 4000 2680
 Wire Wire Line
@@ -1235,164 +1193,34 @@ F 3 "~" H 1260 5270 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:TestPoint TP9
-U 1 1 5EFA68BA
-P 6955 2635
-F 0 "TP9" V 6955 3185 50  0000 C CNN
-F 1 "B+" V 6970 2845 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 7155 2635 50  0001 C CNN
-F 3 "~" H 7155 2635 50  0001 C CNN
-	1    6955 2635
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint TP7
-U 1 1 5EF88A92
-P 7180 2516
-F 0 "TP7" V 7324 2991 50  0000 C CNN
-F 1 "Battery+" V 7174 2841 50  0000 C CNN
-F 2 "TestPoint:TestPoint_Pad_3.0x3.0mm" H 7380 2516 50  0001 C CNN
-F 3 "~" H 7380 2516 50  0001 C CNN
-	1    7180 2516
-	0    1    1    0   
-$EndComp
-Connection ~ 7180 2910
-Wire Wire Line
-	7180 2785 7180 2910
-$Comp
-L power:GNDREF #PWR034
-U 1 1 5EFFDD55
-P 7180 2910
-F 0 "#PWR034" H 7180 2660 50  0001 C CNN
-F 1 "GNDREF" H 7185 2737 50  0000 C CNN
-F 2 "" H 7180 2910 50  0001 C CNN
-F 3 "" H 7180 2910 50  0001 C CNN
-	1    7180 2910
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GNDPWR #PWR036
 U 1 1 5EFFB1C2
-P 9105 2885
-F 0 "#PWR036" H 9105 2685 50  0001 C CNN
-F 1 "GNDPWR" H 9109 2731 50  0000 C CNN
-F 2 "" H 9105 2835 50  0001 C CNN
-F 3 "" H 9105 2835 50  0001 C CNN
-	1    9105 2885
+P 8260 2245
+F 0 "#PWR036" H 8260 2045 50  0001 C CNN
+F 1 "GNDPWR" H 8264 2091 50  0000 C CNN
+F 2 "" H 8260 2195 50  0001 C CNN
+F 3 "" H 8260 2195 50  0001 C CNN
+	1    8260 2245
 	1    0    0    -1  
 $EndComp
-Text Notes 7880 2885 0    50   ~ 0
-Pins from charger to PCB
-Text Notes 7330 2460 0    50   ~ 0
-Battery into PCB\n
-Text Notes 6305 2560 0    50   ~ 0
-Pins to charger\n
 Wire Wire Line
-	9105 2785 9105 2885
+	8260 2145 8260 2245
 Wire Wire Line
-	8855 2785 9105 2785
+	8010 2145 8260 2145
 Wire Wire Line
-	9105 2610 9105 2460
+	8260 1995 8260 1845
 Wire Wire Line
-	8855 2610 9105 2610
-$Comp
-L Connector:TestPoint TP13
-U 1 1 5EFE6C1E
-P 8855 2785
-F 0 "TP13" V 8880 3235 50  0000 C CNN
-F 1 "P-" V 8880 3010 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 9055 2785 50  0001 C CNN
-F 3 "~" H 9055 2785 50  0001 C CNN
-	1    8855 2785
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint TP12
-U 1 1 5EFDD1A0
-P 8855 2610
-F 0 "TP12" V 8880 3060 50  0000 C CNN
-F 1 "P+" V 8880 2835 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 9055 2610 50  0001 C CNN
-F 3 "~" H 9055 2610 50  0001 C CNN
-	1    8855 2610
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	7180 2516 7180 2510
-Connection ~ 7180 2516
+	8010 1995 8260 1995
 $Comp
 L power:+3.3V #PWR035
 U 1 1 5EFC1B62
-P 9105 2460
-F 0 "#PWR035" H 9105 2310 50  0001 C CNN
-F 1 "+3.3V" H 9120 2633 50  0000 C CNN
-F 2 "" H 9105 2460 50  0001 C CNN
-F 3 "" H 9105 2460 50  0001 C CNN
-	1    9105 2460
+P 8260 1845
+F 0 "#PWR035" H 8260 1695 50  0001 C CNN
+F 1 "+3.3V" H 8275 2018 50  0000 C CNN
+F 2 "" H 8260 1845 50  0001 C CNN
+F 3 "" H 8260 1845 50  0001 C CNN
+	1    8260 1845
 	1    0    0    -1  
-$EndComp
-$Comp
-L power:+BATT #PWR033
-U 1 1 5EFBCC1E
-P 7180 2510
-F 0 "#PWR033" H 7180 2360 50  0001 C CNN
-F 1 "+BATT" H 7180 2680 50  0000 C CNN
-F 2 "" H 7180 2510 50  0001 C CNN
-F 3 "" H 7180 2510 50  0001 C CNN
-	1    7180 2510
-	-1   0    0    -1  
-$EndComp
-Wire Wire Line
-	7180 2635 7180 2516
-Wire Wire Line
-	6955 2635 7180 2635
-Wire Wire Line
-	6955 2785 7180 2785
-$Comp
-L Connector:TestPoint TP11
-U 1 1 5EFA088F
-P 7180 2910
-F 0 "TP11" V 7355 3410 50  0000 C CNN
-F 1 "Battery-" V 7181 3235 50  0000 C CNN
-F 2 "TestPoint:TestPoint_Pad_3.0x3.0mm" H 7380 2910 50  0001 C CNN
-F 3 "~" H 7380 2910 50  0001 C CNN
-	1    7180 2910
-	0    1    1    0   
-$EndComp
-Text Notes 7946 1966 0    50   ~ 0
-Charger Module
-$Comp
-L Connector:TestPoint TP16
-U 1 1 5F00E156
-P 9930 2870
-F 0 "TP16" V 9995 3255 50  0000 C CNN
-F 1 "Support" V 9930 3190 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 10130 2870 50  0001 C CNN
-F 3 "~" H 10130 2870 50  0001 C CNN
-	1    9930 2870
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint TP17
-U 1 1 5F011826
-P 9935 3075
-F 0 "TP17" V 10000 3460 50  0000 C CNN
-F 1 "Support" V 9935 3395 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 10135 3075 50  0001 C CNN
-F 3 "~" H 10135 3075 50  0001 C CNN
-	1    9935 3075
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint TP10
-U 1 1 5EFA75EC
-P 6955 2785
-F 0 "TP10" V 6955 3310 50  0000 C CNN
-F 1 "B-" V 6944 3000 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_2.0x2.0mm_Drill1.0mm" H 7155 2785 50  0001 C CNN
-F 3 "~" H 7155 2785 50  0001 C CNN
-	1    6955 2785
-	0    -1   -1   0   
 $EndComp
 $Comp
 L New_Library:MT3608 U1
@@ -1405,10 +1233,8 @@ F 3 "" H 3940 1095 50  0001 C CNN
 	1    2640 1945
 	-1   0    0    -1  
 $EndComp
-Text Label 8475 4100 2    50   ~ 0
+Text Label 6355 4100 0    50   ~ 0
 PACK_SENSE
-NoConn ~ 9930 2870
-NoConn ~ 9935 3075
 Wire Wire Line
 	1390 2945 1115 2945
 Wire Wire Line
@@ -1431,8 +1257,6 @@ Wire Wire Line
 	2040 2580 2085 2580
 Connection ~ 2040 2580
 Wire Wire Line
-	8010 4100 8475 4100
-Wire Wire Line
 	8010 4000 8475 4000
 Wire Wire Line
 	5310 4530 5500 4530
@@ -1451,8 +1275,6 @@ Text Label 8475 4000 2    50   ~ 0
 PRGM
 Text Label 5500 4530 2    50   ~ 0
 PRGM
-Text Notes 9155 2535 0    50   ~ 0
-Regulated power going here\n
 Text Notes 590  1380 0    50   ~ 0
 Design Requirements:\n\nR15 & R16 Close to U1. Feedback line short as possible. Short and wide traces\n\nC8 & C9 close to U2\n\nC10 & C11 close to U3\n\nC6 as close to pre amp as possible\n\n
 $Comp
@@ -1464,6 +1286,114 @@ F 1 "GNDPWR" H 2445 3115 50  0000 C CNN
 F 2 "" H 2430 3245 50  0001 C CNN
 F 3 "" H 2430 3245 50  0001 C CNN
 	1    2430 3295
+	1    0    0    -1  
+$EndComp
+NoConn ~ 4662 2830
+Text Label 4745 6225 0    50   ~ 0
+G
+Text Label 4545 6525 2    50   ~ 0
+S
+Wire Wire Line
+	4575 6225 4745 6225
+$Comp
+L Transistor_FET:CSD16342Q5A Q3
+U 1 1 5EC1B2F5
+P 4745 6425
+F 0 "Q3" V 4994 6425 50  0000 C CNN
+F 1 "AO4484" V 5085 6425 50  0000 C CNN
+F 2 "Main Board1:SOIC-8_3.9x4.9mm_P1.27mm" H 4945 6350 50  0001 L CIN
+F 3 "http://www.ti.com/lit/gpn/csd16342q5a" V 4745 6425 50  0001 L CNN
+	1    4745 6425
+	0    1    1    0   
+$EndComp
+Text Label 4946 6525 0    50   ~ 0
+D
+$Comp
+L Connector:TestPoint TP7
+U 1 1 5F1B2984
+P 7085 1876
+F 0 "TP7" V 7159 1986 50  0000 C CNN
+F 1 "Battery+" V 7079 2201 50  0000 C CNN
+F 2 "TestPoint:TestPoint_Pad_3.0x3.0mm" H 7285 1876 50  0001 C CNN
+F 3 "~" H 7285 1876 50  0001 C CNN
+	1    7085 1876
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7085 1876 7085 1870
+Connection ~ 7085 1876
+$Comp
+L power:+BATT #PWR08
+U 1 1 5F1B298E
+P 7085 1870
+F 0 "#PWR08" H 7085 1720 50  0001 C CNN
+F 1 "+BATT" H 7085 2040 50  0000 C CNN
+F 2 "" H 7085 1870 50  0001 C CNN
+F 3 "" H 7085 1870 50  0001 C CNN
+	1    7085 1870
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	7085 1995 7085 1876
+Wire Wire Line
+	6860 1995 7085 1995
+$Comp
+L Main-Board-rescue:TP4056 U4
+U 1 1 5F19CB5C
+P 7510 1845
+F 0 "U4" H 7435 2045 50  0000 L CNN
+F 1 "TP4056" H 7415 2110 50  0000 L CNN
+F 2 "Main Board1:charger" H 7510 1845 50  0001 C CNN
+F 3 "" H 7510 1845 50  0001 C CNN
+	1    7510 1845
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP9
+U 1 1 5F208168
+P 7085 2270
+F 0 "TP9" V 7015 2380 50  0000 C CNN
+F 1 "Battery-" V 7086 2595 50  0000 C CNN
+F 2 "TestPoint:TestPoint_Pad_3.0x3.0mm" H 7285 2270 50  0001 C CNN
+F 3 "~" H 7285 2270 50  0001 C CNN
+	1    7085 2270
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6860 2145 7085 2145
+$Comp
+L power:GNDREF #PWR028
+U 1 1 5F20816F
+P 7085 2270
+F 0 "#PWR028" H 7085 2020 50  0001 C CNN
+F 1 "GNDREF" H 7090 2097 50  0000 C CNN
+F 2 "" H 7085 2270 50  0001 C CNN
+F 3 "" H 7085 2270 50  0001 C CNN
+	1    7085 2270
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7085 2145 7085 2270
+Connection ~ 7085 2270
+NoConn ~ 7760 2495
+NoConn ~ 7760 2595
+Wire Wire Line
+	8920 4710 8920 5175
+NoConn ~ 6810 4000
+NoConn ~ 8010 4100
+Wire Wire Line
+	6810 4100 6355 4100
+NoConn ~ 8010 4600
+NoConn ~ 6810 4200
+$Comp
+L power:GNDREF #PWR?
+U 1 1 5F063991
+P 8920 5175
+F 0 "#PWR?" H 8920 4925 50  0001 C CNN
+F 1 "GNDREF" H 8925 5002 50  0000 C CNN
+F 2 "" H 8920 5175 50  0001 C CNN
+F 3 "" H 8920 5175 50  0001 C CNN
+	1    8920 5175
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC

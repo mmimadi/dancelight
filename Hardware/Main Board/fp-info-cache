@@ -1,15 +1,15 @@
-3150943457227
-Sensor_Audio
-Infineon_PG-LLGA-5-1
-Infineon_PG-LLGA-5-1 StepUp generated footprint, https://www.infineon.com/cms/en/product/packages/PG-LLGA/PG-LLGA-5-1/
-infineon mems microphone
+3187568422504
+Main Board1
+SOIC-8_3.9x4.9mm_P1.27mm
+SOIC, 8 Pin (JEDEC MS-012AA, https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/soic_narrow-r/r_8.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOIC SO
 0
-15
+8
+3
+Main Board1
+charger
+
+
+0
+6
 5
-Sensor_Audio
-ST_HLGA-6_3.76x4.72mm_P1.65mm
-http://www.st.com/content/ccc/resource/technical/document/datasheet/group3/27/62/48/98/44/54/4d/36/DM00303211/files/DM00303211.pdf/jcr:content/translations/en.DM00303211.pdf
-HLGA Sensor Audio
-0
-6
-6

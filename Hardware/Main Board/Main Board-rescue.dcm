@@ -6,6 +6,18 @@ K linear regulator ldo adjustable positive
 F https://www.diodes.com/assets/Datasheets/AP2127.pdf
 $ENDCMP
 #
+$CMP AP2127K-ADJ_copy
+D 300mA low dropout adjustable linear regulator, shutdown pin, 2.5V-6V input voltage, SOT-23-5 package
+K linear regulator ldo adjustable positive
+F https://www.diodes.com/assets/Datasheets/AP2127.pdf
+$ENDCMP
+#
+$CMP NCP718
+D 150mA low dropout adjustable linear regulator, wide input voltage range, SOT-23-5 package
+K linear regulator ldo adjustable positive
+F https://www.diodes.com/assets/Datasheets/AP2204.pdf
+$ENDCMP
+#
 $CMP reg
 D 150mA low dropout adjustable linear regulator, wide input voltage range, SOT-23-5 package
 K linear regulator ldo adjustable positive
