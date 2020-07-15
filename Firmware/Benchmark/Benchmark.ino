@@ -1,7 +1,6 @@
 int mic = 0;
 int val = 0;
 
-
 void setup() {
 
   Serial.begin(9600);
@@ -11,11 +10,9 @@ void setup() {
 }
 
 void loop() {
-
+  
   val = analogRead(mic);
   analogWrite(5, 200);
-
   Serial.println(val);
-
-
+  
 }
