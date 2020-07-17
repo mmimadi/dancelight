@@ -1,3 +1,9 @@
+/*
+David Roberts
+Michael Madi
+www.flaketechnologies.ca
+*/
+
 #include "common.hpp"
 #include "power_sequences.hpp"
 #include "preset_pattern_state_machine.hpp"

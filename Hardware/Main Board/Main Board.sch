@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:Main Board-cache
 EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
@@ -70,7 +71,7 @@ U 1 1 5EB3F49E
 P 3380 4460
 F 0 "C3" V 3608 4460 50  0000 C CNN
 F 1 "10uf" V 3517 4460 50  0000 C CNN
-F 2 "Capacitor_SMD:C_Elec_4x5.4" H 3380 4460 50  0001 C CNN
+F 2 "Main Board:CP_Elec_4x3" H 3380 4460 50  0001 C CNN
 F 3 "~" H 3380 4460 50  0001 C CNN
 	1    3380 4460
 	0    -1   -1   0   
@@ -139,7 +140,7 @@ U 1 1 5EB248DC
 P 2510 4660
 F 0 "C2" V 2738 4660 50  0000 C CNN
 F 1 "10uf" V 2647 4660 50  0000 C CNN
-F 2 "Capacitor_SMD:C_Elec_4x5.4" H 2510 4660 50  0001 C CNN
+F 2 "Main Board:CP_Elec_4x3" H 2510 4660 50  0001 C CNN
 F 3 "~" H 2510 4660 50  0001 C CNN
 	1    2510 4660
 	0    -1   -1   0   
@@ -616,7 +617,7 @@ U 1 1 5F13F3D9
 P 3515 2680
 F 0 "C5" H 3295 2670 50  0000 L CNN
 F 1 "100uf" H 3265 2590 50  0000 L CNN
-F 2 "Capacitor_SMD:C_Elec_4x5.4" H 3515 2680 50  0001 C CNN
+F 2 "Main Board:100" H 3515 2680 50  0001 C CNN
 F 3 "~" H 3515 2680 50  0001 C CNN
 	1    3515 2680
 	1    0    0    -1  
@@ -724,10 +725,8 @@ F 3 "" H 3845 6555 50  0001 C CNN
 	1    3845 6555
 	1    0    0    -1  
 $EndComp
-Text Notes 7070 6880 0    197  ~ 39
-Flake Technologies (?)\n
-Text Notes 7100 7250 0    79   ~ 16
-Michael Madi | David Roberts\n\n
+Text Notes 7030 7110 0    79   ~ 16
+Michael Madi | David Roberts | www.flaketechnologies.ca\n
 Text Notes 7350 7510 0    79   ~ 16
 Rave Lights Main Board\n
 Wire Wire Line
@@ -924,7 +923,7 @@ U 1 1 5EE78E32
 P 770 4295
 F 0 "C6" H 890 4350 50  0000 C CNN
 F 1 "100uf" H 945 4275 50  0000 C CNN
-F 2 "Capacitor_SMD:C_Elec_4x5.4" H 770 4295 50  0001 C CNN
+F 2 "Main Board:100" H 770 4295 50  0001 C CNN
 F 3 "~" H 770 4295 50  0001 C CNN
 	1    770  4295
 	1    0    0    -1  
@@ -1155,7 +1154,7 @@ U 1 1 5EB25AD7
 P 1490 4860
 F 0 "C1" V 1718 4860 50  0000 C CNN
 F 1 "10uf" V 1627 4860 50  0000 C CNN
-F 2 "Capacitor_SMD:C_Elec_4x5.4" H 1490 4860 50  0001 C CNN
+F 2 "Main Board:CP_Elec_4x3" H 1490 4860 50  0001 C CNN
 F 3 "~" H 1490 4860 50  0001 C CNN
 	1    1490 4860
 	0    -1   -1   0   
@@ -1275,7 +1274,7 @@ Text Label 8475 4000 2    50   ~ 0
 PRGM
 Text Label 5500 4530 2    50   ~ 0
 PRGM
-Text Notes 590  1380 0    50   ~ 0
+Text Notes 2870 1560 0    50   ~ 0
 Design Requirements:\n\nR15 & R16 Close to U1. Feedback line short as possible. Short and wide traces\n\nC8 & C9 close to U2\n\nC10 & C11 close to U3\n\nC6 as close to pre amp as possible\n\n
 $Comp
 L power:GNDPWR #PWR0102
@@ -1386,14 +1385,27 @@ Wire Wire Line
 NoConn ~ 8010 4600
 NoConn ~ 6810 4200
 $Comp
-L power:GNDREF #PWR?
+L power:GNDREF #PWR0104
 U 1 1 5F063991
 P 8920 5175
-F 0 "#PWR?" H 8920 4925 50  0001 C CNN
+F 0 "#PWR0104" H 8920 4925 50  0001 C CNN
 F 1 "GNDREF" H 8925 5002 50  0000 C CNN
 F 2 "" H 8920 5175 50  0001 C CNN
 F 3 "" H 8920 5175 50  0001 C CNN
 	1    8920 5175
+	1    0    0    -1  
+$EndComp
+Text Notes 7080 7260 0    197  ~ 39
+Flake Technologies\n\n
+$Comp
+L Main-Board-rescue:LOGO #G1
+U 1 1 5F13D2FC
+P 6160 7300
+F 0 "#G1" H 6160 6833 60  0001 C CNN
+F 1 "LOGO" H 6160 7767 60  0001 C CNN
+F 2 "" H 6160 7300 50  0001 C CNN
+F 3 "" H 6160 7300 50  0001 C CNN
+	1    6160 7300
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC
