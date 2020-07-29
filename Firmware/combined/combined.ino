@@ -8,7 +8,7 @@ www.flaketechnologies.ca
 #include "power_sequences.hpp"
 #include "preset_pattern_state_machine.hpp"
 //#include "ring_buffer_detection_mode.hpp"
-#include "goertzel_detection_mode.hpp"
+//#include "goertzel_detection_mode.hpp"
 #include "bandpass_filter_beat.hpp"
 
 Power power = Power();
@@ -48,6 +48,8 @@ void checkCurrentModeChanged() {
   lastMode = power.mode;
   
   delete program;
+  Serial.print("mode ");
+  Serial.println(power.mode);
   switch (power.mode) {
     case 0: program = new Pause();                   break;
     case 1: program = new BandpassFilterBeat();      break;
