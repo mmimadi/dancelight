@@ -59,16 +59,19 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 }
 
 void BandpassFilterBeat::loop() {
+    const float bias = 503.5f;
     static unsigned long nextSampleTime = 0; // Used to track rate. A bit optimistic, quite frankly, with skew wandering between 0, 8, 255, and a handful of other values.
     static uint8_t sample_count = 0;
+    float sample;
 
+    //Code to detect beat.
     unsigned long currentSampleTime = micros();
     if (currentSampleTime >= nextSampleTime) {
         nextSampleTime = currentSampleTime + 20;
         sample_count++;
 
         // Read ADC and center so +-512
-        float sample = (float)analogRead(0)-503.f;
+        sample = (float)analogRead(0)-bias;
 
         // Filter only bass component
         float value = bassFilter(sample);
@@ -96,12 +99,15 @@ void BandpassFilterBeat::loop() {
         }
     }
 
+    //Serial.print("sample "); Serial.print(sample);
+    howLoudIsIt = (0.99 * howLoudIsIt + 0.01 * abs(sample));
+    //Serial.print(", howLoudIsIt "); Serial.println(howLoudIsIt);
     if (howBumpingIsIt) { SoundFadeDelayless(); }
 }
 
 void BandpassFilterBeat::writeAndDelay(unsigned int brightness, unsigned int ms) {
-  const int maxDutyCycle = 255;
-  analogWrite(ledPin, brightness * maxDutyCycle / 255);
+  analogWrite(ledPin, 
+    min(255, brightness + howLoudIsIt/5) * maxDutyCycle / 255);
   next_blink = millis() + ms;
 }
 
@@ -114,33 +120,33 @@ void BandpassFilterBeat::SoundFadeDelayless() {
       }
     } else {
       switch (howBumpingIsIt) {
-        case 27: writeAndDelay(255, 20/2); break;
-        case 26: writeAndDelay(250, 20/2); break;
-        case 25: writeAndDelay(240, 20/2); break;
-        case 24: writeAndDelay(230, 20/2); break;
-        case 23: writeAndDelay(220, 20/2); break;
-        case 22: writeAndDelay(210, 30/2); break;
-        case 21: writeAndDelay(200, 30/2); break;
-        case 20: writeAndDelay(190, 30/2); break;
-        case 19: writeAndDelay(180, 30/2); break;
-        case 18: writeAndDelay(170, 20/2); break;
-        case 17: writeAndDelay(160, 30/2); break;
-        case 16: writeAndDelay(150, 40/2); break;
-        case 15: writeAndDelay(140, 50/2); break;
-        case 14: writeAndDelay(130, 50/2); break;
-        case 13: writeAndDelay(120, 60/2); break;
-        case 12: writeAndDelay(110, 50/2); break;
-        case 11: writeAndDelay(100, 50/2); break;
-        case 10: writeAndDelay( 90, 50/2); break;
-        case  9: writeAndDelay( 80, 50/2); break;
-        case  8: writeAndDelay( 70, 30/2); break;
-        case  7: writeAndDelay( 60, 30/2); break;
-        case  6: writeAndDelay( 50, 30/2); break;
-        case  5: writeAndDelay( 40, 30/2); break;
-        case  4: writeAndDelay( 30, 30/2); break;
-        case  3: writeAndDelay( 20, 30/2); break;
-        case  2: writeAndDelay( 10, 30/2); break;
-        case  1: writeAndDelay(  5, 10/2); break;
+        case 27: writeAndDelay(255, 20/4); break;
+        case 26: writeAndDelay(250, 20/4); break;
+        case 25: writeAndDelay(240, 20/4); break;
+        case 24: writeAndDelay(230, 20/4); break;
+        case 23: writeAndDelay(220, 20/4); break;
+        case 22: writeAndDelay(210, 30/4); break;
+        case 21: writeAndDelay(200, 30/4); break;
+        case 20: writeAndDelay(190, 30/4); break;
+        case 19: writeAndDelay(180, 30/4); break;
+        case 18: writeAndDelay(170, 20/4); break;
+        case 17: writeAndDelay(160, 30/4); break;
+        case 16: writeAndDelay(150, 40/4); break;
+        case 15: writeAndDelay(140, 50/4); break;
+        case 14: writeAndDelay(130, 50/4); break;
+        case 13: writeAndDelay(120, 60/4); break;
+        case 12: writeAndDelay(110, 50/4); break;
+        case 11: writeAndDelay(100, 50/4); break;
+        case 10: writeAndDelay( 90, 50/4); break;
+        case  9: writeAndDelay( 80, 50/4); break;
+        case  8: writeAndDelay( 70, 30/4); break;
+        case  7: writeAndDelay( 60, 30/4); break;
+        case  6: writeAndDelay( 50, 30/4); break;
+        case  5: writeAndDelay( 40, 30/4); break;
+        case  4: writeAndDelay( 30, 30/4); break;
+        case  3: writeAndDelay( 20, 30/4); break;
+        case  2: writeAndDelay( 10, 30/4); break;
+        case  1: writeAndDelay(  0, 10/4); break;
       }
     }
     howBumpingIsIt--;

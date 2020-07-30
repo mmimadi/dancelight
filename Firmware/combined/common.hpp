@@ -10,3 +10,5 @@ class Mode {
 public:
 	virtual void loop() = 0;  //Called from .ino's loop().
 };
+
+static uint8_t maxDutyCycle = 255;
