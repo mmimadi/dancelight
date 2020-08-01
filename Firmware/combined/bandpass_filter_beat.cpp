@@ -16,7 +16,7 @@ static const int BandpassFilterBeat::MODE = BandpassFilterBeat::MODE_FADE;
 
 BandpassFilterBeat::BandpassFilterBeat() {
     // Set ADC to 77khz, max for 10bit
-    sbi(ADCSRA,ADPS2);
+    sbi(STCONV);
     cbi(ADCSRA,ADPS1);
     cbi(ADCSRA,ADPS0);
 
