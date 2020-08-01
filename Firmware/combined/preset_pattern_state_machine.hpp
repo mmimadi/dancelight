@@ -1,3 +1,4 @@
+/*
 class PresetBlinkPattern: public Mode {
   public:
     PresetBlinkPattern::PresetBlinkPattern();
@@ -27,3 +28,4 @@ class PresetBlinkPattern: public Mode {
     
     void selectRandomPreset();
 };
+*/

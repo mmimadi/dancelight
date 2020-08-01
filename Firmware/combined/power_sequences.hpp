@@ -5,7 +5,7 @@ class Power {
   public:
     static void setup();
     void buttonLogic();
-    uint8_t mode = 1;
+    uint8_t mode = 2;
     uint8_t powerStatus = 1;
   
   private:

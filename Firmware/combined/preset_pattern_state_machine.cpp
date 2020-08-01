@@ -1,3 +1,4 @@
+/*
 #include "common.hpp"
 #include "preset_pattern_state_machine.hpp"
 
@@ -48,7 +49,6 @@ static const unsigned short int PresetBlinkPattern::pattern_data[] PROGMEM = {
 
   END,
 };
-
 
 void PresetBlinkPattern::selectRandomPreset() {
   short int increment = random(0, 200);
@@ -127,3 +127,4 @@ void PresetBlinkPattern::loop() {
       exit(5); //Invalid command. Ruh roh.
   }
 }
+*/
