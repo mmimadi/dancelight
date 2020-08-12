@@ -5,7 +5,7 @@
 //GoertzelBeat
 static const int GoertzelBeat::MODE = GoertzelBeat::MODE_FADE;
 static const bool GoertzelBeat::LOG_LEVELS = false;
-static const unsigned int GoertzelBeat::rbdm_silence_threshold = 15; //44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
+static const unsigned int GoertzelBeat::rbdm_silence_threshold = 100; //44; //I changed this to from 15. //15 at ~300. TODO: determine if this scales with battery level.
 static const unsigned int GoertzelBeat::rbdm_min_beat_delay_ms = 100; //10 bps, or detect at most 600bpm.
 
 GoertzelBeat::GoertzelBeat() {

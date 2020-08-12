@@ -70,6 +70,6 @@ PresetBlinkPattern::Func PresetBlinkPattern::randWave(PresetBlinkPattern::Func p
     fuzzy_waves,
   };
   
-  auto next = waves[random(0,6)];
+  auto next = waves[random(4,6)];
   return next == prev ? randWave(prev) : next;
 }

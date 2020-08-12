@@ -1,8 +1,9 @@
-#include <EEPROM.h>
+//#include <EEPROM.h>
 #include <avr/sleep.h>
 //#include <avr/wdt.h> //Watchdog timer handling is not used right now.
 #include "common.hpp"
 #include "power_sequences.hpp"
+byte ENBL = 3;
 
 static void Power::setup() {
   pinMode(ledPin, OUTPUT);
@@ -10,11 +11,14 @@ static void Power::setup() {
   attachInterrupt(button, iHandler, FALLING);
   pinMode(button, INPUT);
   pinMode(batteryPin, INPUT);
+  pinMode(ENBL, OUTPUT);
+  
 }
 
 static void Power::iHandler() {
   sei();
   sleep_disable();
+  digitalWrite(ENBL, HIGH);
   buttonHandler++;
   cli();
 }
@@ -25,7 +29,7 @@ void Power::buttonLogic() {
   doubleTapState = 0;
   holdCounter = 0;
 
-  while (buttonHandler >= 1 && holdCounter < 250) {   //!!!should be ==, >= is for crappy (temporary) debounce!!!
+  while (buttonHandler >= 1 && holdCounter < 250) {  //!!!should be ==, >= is for crappy (temporary) debounce!!!
     doubleTapState = 1;
     buttonState = digitalRead(button);
 
@@ -59,7 +63,7 @@ void Power::buttonLogic() {
     if (doubleTapSleep > 30) { //sleep timeout
       doubleTapState = 0;
     }
-    if (powerStatus == 0 && doubleTapSleep > 30) {
+    if (powerStatus == 0 && doubleTapSleep > 30) { //idle light
       
       byte wait = 0;
       while (wait <= 100) {
@@ -128,18 +132,18 @@ void Power::BatteryBlink(uint8_t flash, const uint8_t blinkDelay) const {
 }
 
 void Power::PowerUp() {
+  digitalWrite(ENBL, HIGH);
   sleep_disable();
   powerStatus = 1;
   mode--;
   byte intensity = 0;
   while (intensity < 254) {
     intensity ++;
-    //intensity ++;
     analogWrite(ledPin, intensity);
     delay(11);
   }
 
-  mode = EEPROM.read(0);
+  //mode = EEPROM.read(0);
   
   delay(500);
   //PSU pullup
@@ -156,31 +160,32 @@ void Power::PowerDown() {
     delay(4);
   }
   analogWrite(ledPin, 0);
-  EEPROM.write(0, mode);
-
+//  EEPROM.write(0, mode);
   delay(500);
   Sleep();
   /*Debug for Production! If the LED stays on, the power supply is faulty and won't turn off
     analogWrite(ledPin, 200);
     delay(500);
-    PSU Pull Down
+   digitalWrite(ENBL, LOW)
   */
 }
 
 static void Power::Sleep() {
- 
+ buttonHandler --;
   analogWrite(ledPin, 0);
+  digitalWrite(ENBL, LOW);
   // ADCSRA = 0;
   //  MCUSR = 0;
   //WDTCSR = bit (WDCE) | bit (WDE);
   //WDTCSR = bit (WDIE) | bit (WDP3) | bit (WDP0);    // set WDIE, and 8 seconds delay
   // wdt_reset();
   set_sleep_mode (SLEEP_MODE_PWR_DOWN);
-  //noInterrupts ();
+  noInterrupts ();
   sleep_enable();
   //  MCUCR = bit (BODS) | bit (BODSE);
   // MCUCR = bit (BODS);
   interrupts ();
   sleep_cpu ();
   sleep_disable();
+  
 }

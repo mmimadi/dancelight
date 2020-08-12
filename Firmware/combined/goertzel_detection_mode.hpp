@@ -8,7 +8,7 @@ class GoertzelBeat: public Mode {
   
   private:
     float sampleCounter = 0;
-    float micRawValue = 0;
+    float micRawValue = 10;
     float processedResult = 0;
     
     // upper, lower, and middle components of frequency. (To yield volume, baseline, and skew.)

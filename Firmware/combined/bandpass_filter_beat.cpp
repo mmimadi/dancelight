@@ -16,12 +16,12 @@ static const int BandpassFilterBeat::MODE = BandpassFilterBeat::MODE_FADE;
 
 BandpassFilterBeat::BandpassFilterBeat() {
     // Set ADC to 77khz, max for 10bit
-    sbi(STCONV);
-    cbi(ADCSRA,ADPS1);
-    cbi(ADCSRA,ADPS0);
+//    sbi(STCONV); //i think this part is broken? Refer to original code to fix 
+//    cbi(ADCSRA,ADPS1);
+  //  cbi(ADCSRA,ADPS0);
 
     //The pin with the LED
-    pinMode(5, OUTPUT);
+    pinMode(7, OUTPUT); 
 }
 
 // 20 - 200hz Single Pole Bandpass IIR Filter
@@ -59,7 +59,7 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 }
 
 void BandpassFilterBeat::loop() {
-    const float bias = 503.5f;
+    const float bias = 500.3f;
     static unsigned long nextSampleTime = 0; // Used to track rate. A bit optimistic, quite frankly, with skew wandering between 0, 8, 255, and a handful of other values.
     static uint8_t sample_count = 0;
     float sample;
@@ -71,7 +71,7 @@ void BandpassFilterBeat::loop() {
         sample_count++;
 
         // Read ADC and center so +-512
-        sample = (float)analogRead(0)-bias;
+        sample = (float)analogRead(micInputPin)-bias;
 
         // Filter only bass component
         float value = bassFilter(sample);
