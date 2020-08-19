@@ -14,7 +14,7 @@
 
 static const int BandpassFilterBeat::MODE = BandpassFilterBeat::MODE_FADE;
 
-BandpassFilterBeat::BandpassFilterBeat() {
+BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set the ADC SETTINGS. We need to find equivilent ones to the ARDUINO UNO/NANO for the ATTIY1614. See the datasheet///////////////////////
     // Set ADC to 77khz, max for 10bit
 //    sbi(STCONV); //i think this part is broken? Refer to original code to fix 
 //    cbi(ADCSRA,ADPS1);

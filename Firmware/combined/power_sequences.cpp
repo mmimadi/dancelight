@@ -180,12 +180,12 @@ static void Power::Sleep() {
   //WDTCSR = bit (WDIE) | bit (WDP3) | bit (WDP0);    // set WDIE, and 8 seconds delay
   // wdt_reset();
   set_sleep_mode (SLEEP_MODE_PWR_DOWN);
-  noInterrupts ();
+  //noInterrupts ();
   sleep_enable();
   //  MCUCR = bit (BODS) | bit (BODSE);
   // MCUCR = bit (BODS);
-  interrupts ();
-  sleep_cpu ();
-  sleep_disable();
+ // interrupts ();
+ // sleep_cpu ();
+ // sleep_disable();
   
 }

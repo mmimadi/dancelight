@@ -27,6 +27,9 @@ void loop() {
   power.buttonLogic();
   checkCurrentModeChanged();
   program->loop();
+  digitalWrite(3, HIGH);
+
+ 
 
 }
 

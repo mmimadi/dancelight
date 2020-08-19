@@ -13,11 +13,11 @@ void setup() {
 void loop() {
   
   val = analogRead(mic);
-  analogWrite(4, 120);
+ digitalWrite(3, HIGH);
  delay(1000);
-  analogWrite(4, 240);
+ digitalWrite(3, LOW);
   delay(1000);
-  digitalWrite(3, HIGH);
+  //digitalWrite(3, HIGH);
   Serial.println(val);
   
 }
