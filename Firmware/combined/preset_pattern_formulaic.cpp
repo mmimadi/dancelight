@@ -11,7 +11,7 @@ PresetBlinkPattern::PresetBlinkPattern() {
 
 void PresetBlinkPattern::loop() {
   delay(24);
-  t+=0.1;
+  t+=0.02;
   f=min(1,f+0.005);
   float i = c(t)*(1-f) + n(t)*f;
   // Serial.print("ret: "); Serial.println(i);
