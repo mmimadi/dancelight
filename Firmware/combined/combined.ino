@@ -10,8 +10,6 @@ www.flaketechnologies.ca
 #include "common.hpp"
 #include "power_sequences.hpp"
 #include "preset_pattern_formulaic.hpp"
-//#include "ring_buffer_detection_mode.hpp"
-//#include "goertzel_detection_mode.hpp"
 #include "bandpass_filter_beat.hpp"
 
 Power power = Power();
