@@ -12,33 +12,26 @@
 // Our Global Sample Rate, 5000hz
 // #define SAMPLEPERIODUS 200
 
+//Switch the modes - use MODE_INSTANT to (more or less) eliminate the variable of the fade.
 static const int BandpassFilterBeat::MODE = BandpassFilterBeat::MODE_FADE;
 
 BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set the ADC SETTINGS. We need to find equivilent ones to the ARDUINO UNO/NANO for the ATTIY1614. See the datasheet///////////////////////
+    //Set ADC to 77khz, max for 10bit
+    
+    #ifdef DEV_BOARD
+        //sbi(STCONV); //i think this part is broken? Refer to original code to fix 
+        //cbi(ADCSRA,ADPS1);
+        //cbi(ADCSRA,ADPS0);
+    #else
+        //This *SHOULD* set the ADC to freerunning mode. Try replacing 3 with 10)
+        ADC0.MUXPOS  = 3;
+        ADC0.COMMAND = ADC_STCONV_bm;
 
-
-  
-    // Set ADC to 77khz, max for 10bit
-  // sbi(STCONV); //i think this part is broken? Refer to original code to fix 
-  // ADC0.MUXPOS  = 3;
-  //ADC0.COMMAND = ADC_STCONV_bm;
-//    cbi(ADCSRA,ADPS1);
-  //  cbi(ADCSRA,ADPS0);
-
-
-//This *SHOULD* set the ADC to freerunning mode. Try replacing 3 with 10)
-ADC0.MUXPOS  = 3;
-  ADC0.COMMAND = ADC_STCONV_bm;
-
-//this sets the prescaler. it should be set to 77khz but I have no idea how to do that. it is set way higher right now.
-   ADC0.CTRLC = ADC_PRESC_DIV2_gc  
-       | ADC_REFSEL_INTREF_gc  
-       | 0 << ADC_SAMPCAP_bp;  
-
-
-
-    //The pin with the LED
-    pinMode(7, OUTPUT); 
+        //this sets the prescaler. it should be set to 77khz but I have no idea how to do that. it is set way higher right now.
+        ADC0.CTRLC = ADC_PRESC_DIV2_gc  
+           | ADC_REFSEL_INTREF_gc  
+           | 0 << ADC_SAMPCAP_bp;  
+    #endif
 }
 
 // 20 - 200hz Single Pole Bandpass IIR Filter
@@ -101,24 +94,23 @@ void BandpassFilterBeat::loop() {
             // Filter out repeating bass sounds 100 - 180bpm
             float beat = beatFilter(envelope);
 
-            // Threshold it based on potentiometer on AN1
+            // Threshold is based on potentiometer on AN1
             float thresh = 40;
 
             // If we are above threshold, light up LED
-            //if(beat < thresh) analogWrite(5, 0);
-            //else analogWrite(5, 255);
-            if(beat > thresh) {
-                howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
-            }
+            analogWrite(ledPin, 255 * (beat < thresh));
+            //if(beat > thresh) {
+            //    howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
+            //}
 
             //Reset sample counter
             sample_count = 0;
         }
     }
 
-    //Serial.print("sample "); Serial.print(sample);
+    Serial.print("sample "); Serial.print(sample);
     howLoudIsIt = (0.99 * howLoudIsIt + 0.01 * abs(sample));
-    //Serial.print(", howLoudIsIt "); Serial.println(howLoudIsIt);
+    Serial.print(", howLoudIsIt "); Serial.println(howLoudIsIt);
     if (howBumpingIsIt) { SoundFadeDelayless(); }
 }
 
@@ -132,8 +124,8 @@ void BandpassFilterBeat::SoundFadeDelayless() {
   if (millis() >= next_blink) {
     if (MODE == MODE_INSTANT) {
       switch (howBumpingIsIt) {
-        case  2: writeAndDelay(255, 16); break;
-        case  1: writeAndDelay(  5, 16); break;
+        case  2: writeAndDelay(255, 4); break;
+        case  1: writeAndDelay(  5, 0); break;
       }
     } else {
       switch (howBumpingIsIt) {

@@ -54,9 +54,9 @@ void checkCurrentModeChanged() {
   Serial.print("mode ");
   Serial.println(power.mode);
   switch (power.mode) {
-    case 0: program = new Pause();                   break;
-    case 1: program = new BandpassFilterBeat();      break;
-    case 2: program = new PresetBlinkPattern();      break;
-    case 3: program = new Solid();                   break;
+    case 0: program = new Pause();              break;
+    case 1: program = new BandpassFilterBeat(); break;
+    case 2: program = new PresetBlinkPattern(); break;
+    case 3: program = new Solid();              break;
   }
 }
