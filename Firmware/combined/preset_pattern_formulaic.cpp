@@ -16,7 +16,7 @@ void PresetBlinkPattern::loop() {
   float i = c(t)*(1-f) + n(t)*f;
   // Serial.print("ret: "); Serial.println(i);
   // Serial.print("f  : "); Serial.println(f);
-  analogWrite(ledPin, floor(pow(i, 2)*255.9999));
+  analogWrite(ledPin, floor(pow(i, 2)*maxDutyCycle));
   
   //Next preset.
   if (d<millis()) {
