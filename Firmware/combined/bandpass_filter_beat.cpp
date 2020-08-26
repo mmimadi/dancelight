@@ -15,10 +15,27 @@
 static const int BandpassFilterBeat::MODE = BandpassFilterBeat::MODE_FADE;
 
 BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set the ADC SETTINGS. We need to find equivilent ones to the ARDUINO UNO/NANO for the ATTIY1614. See the datasheet///////////////////////
+
+
+  
     // Set ADC to 77khz, max for 10bit
-//    sbi(STCONV); //i think this part is broken? Refer to original code to fix 
+  // sbi(STCONV); //i think this part is broken? Refer to original code to fix 
+  // ADC0.MUXPOS  = 3;
+  //ADC0.COMMAND = ADC_STCONV_bm;
 //    cbi(ADCSRA,ADPS1);
   //  cbi(ADCSRA,ADPS0);
+
+
+//This *SHOULD* set the ADC to freerunning mode. Try replacing 3 with 10)
+ADC0.MUXPOS  = 3;
+  ADC0.COMMAND = ADC_STCONV_bm;
+
+//this sets the prescaler. it should be set to 77khz but I have no idea how to do that. it is set way higher right now.
+   ADC0.CTRLC = ADC_PRESC_DIV2_gc  
+       | ADC_REFSEL_INTREF_gc  
+       | 0 << ADC_SAMPCAP_bp;  
+
+
 
     //The pin with the LED
     pinMode(7, OUTPUT); 
