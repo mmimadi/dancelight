@@ -28,9 +28,6 @@ void loop() {
   checkCurrentModeChanged();
   program->loop();
   digitalWrite(3, HIGH);
-
- 
-
 }
 
 
@@ -40,7 +37,7 @@ class Pause: public Mode {
 };
 class Solid: public Mode {
   public:
-    Solid::Solid() { analogWrite(ledPin, 255); };
+    Solid::Solid() { analogWrite(ledPin, maxDutyCycle - 55); };
     void loop() {};
 };
 
