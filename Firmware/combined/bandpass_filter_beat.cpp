@@ -9,9 +9,6 @@
 #include "common.hpp"
 #include "bandpass_filter_beat.hpp"
 
-// Our Global Sample Rate, 5000hz
-// #define SAMPLEPERIODUS 200
-
 //Switch the modes - use MODE_INSTANT to (more or less) eliminate the variable of the fade.
 static const int BandpassFilterBeat::MODE = BandpassFilterBeat::MODE_FADE;
 
@@ -19,9 +16,9 @@ BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set
     //Set ADC to 77khz, max for 10bit
     
     #ifdef DEV_BOARD
-        //sbi(STCONV); //i think this part is broken? Refer to original code to fix 
-        //cbi(ADCSRA,ADPS1);
-        //cbi(ADCSRA,ADPS0);
+        sbi(STCONV); //i think this part is broken? Refer to original code to fix 
+        cbi(ADCSRA,ADPS1);
+        cbi(ADCSRA,ADPS0);
     #else
         //This *SHOULD* set the ADC to freerunning mode. Try replacing 3 with 10)
         ADC0.MUXPOS  = 3;
@@ -69,7 +66,7 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 }
 
 void BandpassFilterBeat::loop() {
-    const float bias = 500.3f;
+    const float bias = 80.0f;
     static unsigned long nextSampleTime = 0; // Used to track rate. A bit optimistic, quite frankly, with skew wandering between 0, 8, 255, and a handful of other values.
     static uint8_t sample_count = 0;
     float sample;
@@ -98,19 +95,19 @@ void BandpassFilterBeat::loop() {
             float thresh = 40;
 
             // If we are above threshold, light up LED
-            analogWrite(ledPin, 255 * (beat < thresh));
-            //if(beat > thresh) {
-            //    howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
-            //}
+            //analogWrite(ledPin, 255 * (beat < thresh));
+            if(beat > thresh) {
+                howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
+            }
 
             //Reset sample counter
             sample_count = 0;
         }
     }
 
-    Serial.print("sample "); Serial.print(sample);
+    //Serial.print("sample "); Serial.print(sample);
     howLoudIsIt = (0.99 * howLoudIsIt + 0.01 * abs(sample));
-    Serial.print(", howLoudIsIt "); Serial.println(howLoudIsIt);
+    //Serial.print(", howLoudIsIt "); Serial.println(howLoudIsIt);
     if (howBumpingIsIt) { SoundFadeDelayless(); }
 }
 
