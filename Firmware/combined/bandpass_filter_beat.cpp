@@ -16,7 +16,7 @@ BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set
     //Set ADC to 77khz, max for 10bit
     
     #ifdef DEV_BOARD
-        sbi(STCONV); //i think this part is broken? Refer to original code to fix 
+        sbi(ADCSRA,ADPS2);
         cbi(ADCSRA,ADPS1);
         cbi(ADCSRA,ADPS0);
     #else
@@ -67,9 +67,19 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 
 void BandpassFilterBeat::loop() {
     const float bias = 80.0f;
+    
+    // In the original project, threshold was based on a potentiometer on AN1. On ours, it auto-adjusts.
+    const float envelopeThreshold = 30;
     static unsigned long nextSampleTime = 0; // Used to track rate. A bit optimistic, quite frankly, with skew wandering between 0, 8, 255, and a handful of other values.
     static uint8_t sample_count = 0;
     float sample;
+    
+    static float threshold = 0;
+    static float silence = 15.0; //arbitrary units 🙄 - this is min threshold
+    static float cycles_since_beat;
+    static float cycles_since_beat_deviance;
+    static bool beatDetected = false;
+    static float envelopeAvg = 0;
 
     //Code to detect beat.
     unsigned long currentSampleTime = micros();
@@ -90,15 +100,30 @@ void BandpassFilterBeat::loop() {
         if(sample_count >= 200) {
             // Filter out repeating bass sounds 100 - 180bpm
             float beat = beatFilter(envelope);
-
-            // Threshold is based on potentiometer on AN1
-            float thresh = 40;
-
+            envelopeAvg = envelopeAvg*0.9 + envelope*0.1;
+            
+            
             // If we are above threshold, light up LED
-            //analogWrite(ledPin, 255 * (beat < thresh));
-            if(beat > thresh) {
-                howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
+            //analogWrite(ledPin, 255 * (beat < envelopeThreshold));
+            Serial.print(", howLoudIsIt1 "); Serial.print(howLoudIsIt*0.10);
+            Serial.print(", howLoudIsIt2 "); Serial.print(howLoudIsIt*0.50);
+            Serial.print(", envelopeAvg "); Serial.print(envelopeAvg);
+            Serial.print(", beat "); Serial.print(beat);
+            Serial.print(", thresh "); Serial.print(envelopeThreshold);
+            
+            if(beat > 0 && envelopeAvg > envelopeThreshold && envelopeAvg > howLoudIsIt*0.50) {
+                if (!beatDetected) {
+                    howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
+                    beatDetected = true;
+                    Serial.print(", hi "); Serial.print(20);
+                } else {
+                    Serial.print(", hi "); Serial.print(10);
+                }
+            } else {
+                beatDetected = false;
+                Serial.print(", hi "); Serial.print(0);
             }
+            Serial.println("");
 
             //Reset sample counter
             sample_count = 0;
@@ -106,7 +131,11 @@ void BandpassFilterBeat::loop() {
     }
 
     //Serial.print("sample "); Serial.print(sample);
-    howLoudIsIt = (0.99 * howLoudIsIt + 0.01 * abs(sample));
+    if (sample > howLoudIsIt) { //Increase fast, fade slow.
+        howLoudIsIt = (0.99 * howLoudIsIt + 0.01 * abs(sample));
+    } else {
+        howLoudIsIt = (0.99999 * howLoudIsIt + 0.00001 * abs(sample));
+    }
     //Serial.print(", howLoudIsIt "); Serial.println(howLoudIsIt);
     if (howBumpingIsIt) { SoundFadeDelayless(); }
 }
