@@ -6,7 +6,6 @@ PresetBlinkPattern::PresetBlinkPattern() {
   n = randWave(c);
   t = f = 0;
   d = millis()+phaseMS;
-  
 };
 
 

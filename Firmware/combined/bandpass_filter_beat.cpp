@@ -20,10 +20,15 @@ BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set
         cbi(ADCSRA,ADPS1);
         cbi(ADCSRA,ADPS0);
     #else
-   
-
+        return; //We don't have this figured out yet, so it listens at too high a frequency. But it listens…
+        //This *SHOULD* set the ADC to freerunning mode. Try replacing 3 with 10)
+        ADC0.MUXPOS  = 3;
+        ADC0.COMMAND = ADC_STCONV_bm;
+        
         //this sets the prescaler. it should be set to 77khz but I have no idea how to do that. it is set way higher right now.
-   
+        ADC0.CTRLC = ADC_PRESC_DIV2_gc  
+           | ADC_REFSEL_INTREF_gc  
+           | 0 << ADC_SAMPCAP_bp;  
     #endif
 }
 
@@ -62,19 +67,13 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 }
 
 void BandpassFilterBeat::loop() {
-    #ifdef DEV_BOARD
-        const float bias = 80.0f;
-    #else
-        const float bias = 250.0f;
-    #endif
-    
-    
     // In the original project, threshold was based on a potentiometer on AN1. On ours, it auto-adjusts.
     const float envelopeThreshold = 30;
     static unsigned long nextSampleTime = 0; // Used to track rate. A bit optimistic, quite frankly, with skew wandering between 0, 8, 255, and a handful of other values.
     static uint8_t sample_count = 0;
-    float sample;
+    float sample, raw_sample;
     
+    static float bias = 275.f; //Usually in the neighbourhood.
     static float threshold = 0;
     static float silence = 15.0; //arbitrary units 🙄 - this is min threshold
     static float cycles_since_beat;
@@ -89,7 +88,9 @@ void BandpassFilterBeat::loop() {
         sample_count++;
 
         // Read ADC and center so +-512
-        sample = (float)analogRead(micInputPin)-bias;
+        float raw_sample = (float)analogRead(micInputPin);
+        bias = 0.9999*bias + 0.0001*raw_sample;
+        sample = raw_sample - bias;
 
         // Filter only bass component
         float value = bassFilter(sample);
@@ -106,12 +107,13 @@ void BandpassFilterBeat::loop() {
             
             // If we are above threshold, light up LED
             //analogWrite(ledPin, 255 * (beat < envelopeThreshold));
-            Serial.print(", sample "); Serial.print(sample);
-            Serial.print(", howLoudIsIt1 "); Serial.print(howLoudIsIt*0.10);
-            Serial.print(", howLoudIsIt2 "); Serial.print(howLoudIsIt*0.50);
-            Serial.print(", envelopeAvg "); Serial.print(envelopeAvg);
-            Serial.print(", beat "); Serial.print(beat);
-            Serial.print(", thresh "); Serial.print(envelopeThreshold);
+            Serial.print(", bias "); Serial.print(bias);
+            //Serial.print(", sample "); Serial.print(sample);
+            //Serial.print(", howLoudIsIt1 "); Serial.print(howLoudIsIt*0.10);
+            //Serial.print(", howLoudIsIt2 "); Serial.print(howLoudIsIt*0.50);
+            //Serial.print(", envelopeAvg "); Serial.print(envelopeAvg);
+            //Serial.print(", beat "); Serial.print(beat);
+            //Serial.print(", thresh "); Serial.print(envelopeThreshold);
             
             if(beat > 0 && envelopeAvg > envelopeThreshold && envelopeAvg > howLoudIsIt*0.50) {
                 if (!beatDetected) {

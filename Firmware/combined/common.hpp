@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-//#define DEV_BOARD
+#define DEV_BOARD
 
 #ifdef DEV_BOARD
 	////Arduino UNO and NANO Compatible Port////

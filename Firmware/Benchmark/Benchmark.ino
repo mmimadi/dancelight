@@ -3,7 +3,7 @@ int val = 0;
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(mic, INPUT);
   pinMode(4, OUTPUT);
     pinMode(3, OUTPUT);
