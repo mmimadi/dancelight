@@ -20,14 +20,10 @@ BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set
         cbi(ADCSRA,ADPS1);
         cbi(ADCSRA,ADPS0);
     #else
-        //This *SHOULD* set the ADC to freerunning mode. Try replacing 3 with 10)
-        ADC0.MUXPOS  = 3;
-        ADC0.COMMAND = ADC_STCONV_bm;
+   
 
         //this sets the prescaler. it should be set to 77khz but I have no idea how to do that. it is set way higher right now.
-        ADC0.CTRLC = ADC_PRESC_DIV2_gc  
-           | ADC_REFSEL_INTREF_gc  
-           | 0 << ADC_SAMPCAP_bp;  
+   
     #endif
 }
 
@@ -148,7 +144,7 @@ void BandpassFilterBeat::loop() {
 
 void BandpassFilterBeat::writeAndDelay(unsigned int brightness, unsigned int ms) {
   analogWrite(ledPin, 
-    min(255, brightness + howLoudIsIt/5) * maxDutyCycle / 255);
+    min(255, brightness) * maxDutyCycle / 255);
   next_blink = millis() + ms;
 }
 

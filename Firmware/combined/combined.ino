@@ -18,14 +18,14 @@ Mode* program = NULL; //how we're blinking, what mode
 void setup() {
   Serial.begin(115200);
   power.setup();
-  digitalWrite(3, HIGH);
+  //digitalWrite(3, HIGH);
 }
 
 void loop() {
   power.buttonLogic();
   checkCurrentModeChanged();
   program->loop();
-  digitalWrite(3, HIGH);
+//  digitalWrite(3, HIGH);
 }
 
 
@@ -35,7 +35,7 @@ class Pause: public Mode {
 };
 class Solid: public Mode {
   public:
-    Solid::Solid() { analogWrite(ledPin, maxDutyCycle - 55); };
+    Solid::Solid() { analogWrite(ledPin, maxDutyCycle - 40); };
     void loop() {};
 };
 

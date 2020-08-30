@@ -14,10 +14,13 @@ void loop() {
   
  // val = analogRead(mic);
  digitalWrite(3, HIGH);
+ analogRead(mic);
+ 
+ 
 // delay(1000);
 // digitalWrite(3, LOW);
  // delay(1000);
   //digitalWrite(3, HIGH);
-  Serial.println(val);
+  Serial.println(analogRead(mic));
   
 }
