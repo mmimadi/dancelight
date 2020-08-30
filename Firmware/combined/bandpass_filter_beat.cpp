@@ -66,7 +66,12 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 }
 
 void BandpassFilterBeat::loop() {
-    const float bias = 80.0f;
+    #ifdef DEV_BOARD
+        const float bias = 80.0f;
+    #else
+        const float bias = 250.0f;
+    #endif
+    
     
     // In the original project, threshold was based on a potentiometer on AN1. On ours, it auto-adjusts.
     const float envelopeThreshold = 30;
@@ -105,6 +110,7 @@ void BandpassFilterBeat::loop() {
             
             // If we are above threshold, light up LED
             //analogWrite(ledPin, 255 * (beat < envelopeThreshold));
+            Serial.print(", sample "); Serial.print(sample);
             Serial.print(", howLoudIsIt1 "); Serial.print(howLoudIsIt*0.10);
             Serial.print(", howLoudIsIt2 "); Serial.print(howLoudIsIt*0.50);
             Serial.print(", envelopeAvg "); Serial.print(envelopeAvg);
