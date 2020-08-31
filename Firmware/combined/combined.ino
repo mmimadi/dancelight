@@ -8,26 +8,28 @@ www.flaketechnologies.ca
 //This version is ported for Mainboard REV 1.0 
 
 #include "common.hpp"
-#include "power_sequences.hpp"
 #include "preset_pattern_formulaic.hpp"
 #include "bandpass_filter_beat.hpp"
 
-Power power = Power();
+uint8_t mode = 1;
+uint8_t powerStatus = 1; 
+
 Mode* program = NULL; //how we're blinking, what mode
 
 void setup() {
   Serial.begin(115200);
-  power.setup();
-  //digitalWrite(3, HIGH);
+  power_setup();
 }
 
 void loop() {
-  power.buttonLogic();
+  buttonLogic();
   checkCurrentModeChanged();
   program->loop();
-//  digitalWrite(3, HIGH);
 }
 
+
+
+//Mode logic.
 
 class Pause: public Mode {
   public:
@@ -39,21 +41,21 @@ class Solid: public Mode {
     void loop() {};
 };
 
-uint8_t lastMode = 0; 
 void checkCurrentModeChanged() {
+  static uint8_t lastMode = 0;
   //Wrap mode back around, so it loops when you press the button.
-  if (power.mode >= 4 && power.powerStatus == 1) {
+  if (mode >= 4 && powerStatus == 1) {
     //Serial.print("Unknown mode, "); Serial.print(mode); Serial.println(". Reset to 1.");
-    power.mode = 1;
+    mode = 1;
   }
   
-  if (power.mode == lastMode) { return; }
-  lastMode = power.mode;
+  if (mode == lastMode) { return; }
+  lastMode = mode;
   
   delete program;
   Serial.print("mode ");
-  Serial.println(power.mode);
-  switch (power.mode) {
+  Serial.println(mode);
+  switch (mode) {
     case 0: program = new Pause();              break;
     case 1: program = new BandpassFilterBeat(); break;
     case 2: program = new PresetBlinkPattern(); break;

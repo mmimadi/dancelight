@@ -1,21 +1,26 @@
 //#include <EEPROM.h>
 #include <avr/sleep.h>
 //#include <avr/wdt.h> //Watchdog timer handling is not used right now.
-#include "common.hpp"
-#include "power_sequences.hpp"
-byte ENBL = 3;
 
-static void Power::setup() {
+uint8_t ENBL = 3;
+static byte buttonHandler = 0; //Double Tap Variable Counter
+
+byte buttonState = 1; //i think this is the button pin
+byte holdCounter = 0;
+byte doubleTapSleep = 0;
+byte doubleTapState = 0;
+float batteryVoltage = 0;
+
+static void power_setup() {
   pinMode(ledPin, OUTPUT);
   pinMode(button, INPUT_PULLUP);
   attachInterrupt(button, iHandler, FALLING);
   pinMode(button, INPUT);
   pinMode(batteryPin, INPUT);
   pinMode(ENBL, OUTPUT);
-  
 }
 
-static void Power::iHandler() {
+static void iHandler() {
   sei();
   sleep_disable();
   digitalWrite(ENBL, HIGH);
@@ -23,7 +28,7 @@ static void Power::iHandler() {
   cli();
 }
 
-void Power::buttonLogic() {
+void buttonLogic() {
   buttonState = 0;
   doubleTapSleep = 0;
   doubleTapState = 0;
@@ -65,7 +70,7 @@ void Power::buttonLogic() {
     }
     if (powerStatus == 0 && doubleTapSleep > 30) { //idle light
       
-      byte wait = 0;
+      uint8_t wait = 0;
       while (wait <= 100) {
         //Serial.println(wait);
         delay(25);
@@ -86,7 +91,7 @@ void Power::buttonLogic() {
 }
 
 
-void Power::BatteryReport() {
+void BatteryReport() {
   mode--;
   mode--;
   analogWrite(ledPin, 0),
@@ -121,7 +126,7 @@ void Power::BatteryReport() {
   }
 }
 
-void Power::BatteryBlink(uint8_t flash, const uint8_t blinkDelay) const {
+void BatteryBlink(uint8_t flash, const uint8_t blinkDelay) {
   while(flash--) {
     analogWrite(ledPin, 255);
     delay(blinkDelay);
@@ -131,12 +136,12 @@ void Power::BatteryBlink(uint8_t flash, const uint8_t blinkDelay) const {
   delay(1500);
 }
 
-void Power::PowerUp() {
+void PowerUp() {
   digitalWrite(ENBL, HIGH);
   sleep_disable();
   powerStatus = 1;
   mode--;
-  byte intensity = 0;
+  uint8_t intensity = 0;
   while (intensity < 254) {
     intensity ++;
     analogWrite(ledPin, intensity);
@@ -149,7 +154,7 @@ void Power::PowerUp() {
   //PSU pullup
 }
 
-void Power::PowerDown() {
+void PowerDown() {
     powerStatus = 0;
   mode--;
   int intensity = 255;
@@ -170,7 +175,7 @@ void Power::PowerDown() {
   */
 }
 
-static void Power::Sleep() {
+static void Sleep() {
  buttonHandler --;
   analogWrite(ledPin, 0);
   digitalWrite(ENBL, LOW);
