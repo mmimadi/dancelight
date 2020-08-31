@@ -18,7 +18,6 @@ class BandpassFilterBeat: public Mode {
     const float beatFilter(float sample);
 
     //light fade
-    float howLoudIsIt = 0;
     uint8_t howBumpingIsIt = 0;
     const uint8_t ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
 
