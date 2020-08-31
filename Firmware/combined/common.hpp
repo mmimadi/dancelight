@@ -1,10 +1,10 @@
 #include <Arduino.h>
 
-#define DEV_BOARD
+//#define DEV_BOARD
 
 #ifdef DEV_BOARD
 	////Arduino UNO and NANO Compatible Port////
-	//Use Arduino Nano/USBasp port ttyUSB0
+	//Use Arduino Nano/AVRISP mkII port ttyUSB0
 	
 	static const byte micInputPin = 0;
 	static constexpr byte button = digitalPinToInterrupt(1); //from 2 to 1 for pcb

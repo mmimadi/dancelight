@@ -18,8 +18,10 @@ class BandpassFilterBeat: public Mode {
     const float beatFilter(float sample);
 
     //light fade
+    unsigned long beatAtMs = 0;
     uint8_t howBumpingIsIt = 0;
     const uint8_t ITS_TOTALLY_LIT = MODE == MODE_INSTANT ? 2 : 27;
+    float fadeDuration = 250; //250ms = 240bps by default
 
     void writeAndDelay(unsigned int brightness, unsigned int ms);
     void SoundFadeDelayless();

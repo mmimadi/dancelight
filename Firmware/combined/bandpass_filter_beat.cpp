@@ -36,7 +36,7 @@ BandpassFilterBeat::BandpassFilterBeat() { //////////////////these registers set
 const float BandpassFilterBeat::bassFilter(float sample) {
     static float xv[3] = {0,0,0}, yv[3] = {0,0,0};
     xv[0] = xv[1]; xv[1] = xv[2]; 
-    xv[2] = (sample) / 3.f; // change here to values close to 2, to adapt for stronger or weeker sources of line level audio  
+    xv[2] = (sample) / 3.f; // change here to values close to 2, to adapt for stronger or weaker sources of line level audio  
     
 
     yv[0] = yv[1]; yv[1] = yv[2]; 
@@ -68,7 +68,7 @@ const float BandpassFilterBeat::beatFilter(float sample) {
 
 void BandpassFilterBeat::loop() {
     // In the original project, threshold was based on a potentiometer on AN1. On ours, it auto-adjusts.
-    const float envelopeThreshold = 25;
+    static const float envelopeThreshold = 25;
     static unsigned long nextSampleTime = 0; // Used to track rate. A bit optimistic, quite frankly, with skew wandering between 0, 8, 255, and a handful of other values.
     static uint8_t sample_count = 0;
     float sample, raw_sample;
@@ -80,17 +80,18 @@ void BandpassFilterBeat::loop() {
     static float cycles_since_beat_deviance;
     static bool beatDetected = false;
     static float envelopeAvg = 0;
-    static const float envelopeConfidenceFactor = 0.50; //Higher = less confident.
-    static float currentVolume = 0;
+    const float envelopeConfidenceFactor = 0.50; //Higher = less confident.
+    static float currentAvgVolume = 0; //long-term average, fast attack/slow decay
+    static float currentSmlVolume = 0; //short-term average
 
     //Pump the beat detection.
     unsigned long currentSampleTime = micros();
+    raw_sample = (float)analogRead(micInputPin);
     if (currentSampleTime >= nextSampleTime) {
         nextSampleTime = currentSampleTime + 20;
         sample_count++;
 
         // Read ADC and center so +-512
-        float raw_sample = (float)analogRead(micInputPin);
         bias = 0.9999*bias + 0.0001*raw_sample;
         sample = raw_sample - bias;
 
@@ -112,27 +113,34 @@ void BandpassFilterBeat::loop() {
             
             //Serial.print(", bias "); Serial.print(bias);
             //Serial.print(", sample "); Serial.print(sample);
-            Serial.print(", beat "); Serial.print(beat);
-            Serial.print(", envelopeAvg "); Serial.print(envelopeAvg);
-            Serial.print(", envelopeThreshold "); Serial.print(envelopeThreshold);
-            Serial.print(", ECF "); Serial.print(currentVolume*envelopeConfidenceFactor);
+            //Serial.print(", fadeDuration "); Serial.print(fadeDuration);
+            //Serial.print(", beat "); Serial.print(beat);
+            //Serial.print(", envelopeAvg "); Serial.print(envelopeAvg);
+            //Serial.print(", envelopeThreshold "); Serial.print(envelopeThreshold);
+            //Serial.print(", ECF "); Serial.print(currentAvgVolume*envelopeConfidenceFactor);
             //Serial.print(", thresh "); Serial.print(envelopeThreshold);
             
             if(
                 beat > 0
-                && envelopeAvg > envelopeThreshold
-                && envelopeAvg > currentVolume*envelopeConfidenceFactor
+                && envelopeAvg > max(envelopeThreshold, currentAvgVolume*envelopeConfidenceFactor)
             ) {
                 if (!beatDetected) {
+                    unsigned long now = millis();
+                    if (now - beatAtMs < 500) { //beat quickness → fade time - requires at least 120 bpm.
+                        fadeDuration = fadeDuration * 0.95 + (now - beatAtMs) * 0.05;
+                    } else { //fall back to the normal ¼sec fades.
+                        fadeDuration = fadeDuration * 0.95 + (250           ) * 0.05;
+                    }
+                    beatAtMs = now;
                     howBumpingIsIt = ITS_TOTALLY_LIT; // ヽ( •_)ᕗ
                     beatDetected = true;
-                    Serial.print(", hi "); Serial.print(20);
+                    //Serial.print(", hi "); Serial.print(20);
                 } else {
-                    Serial.print(", hi "); Serial.print(10);
+                    //Serial.print(", hi "); Serial.print(10);
                 }
             } else {
                 beatDetected = false;
-                Serial.print(", hi "); Serial.print(0);
+                //Serial.print(", hi "); Serial.print(0);
             }
             Serial.println("");
 
@@ -141,61 +149,52 @@ void BandpassFilterBeat::loop() {
         }
         
         //Serial.print("sample "); Serial.print(sample);
-        if (sample > currentVolume) { //Increase fast, fade slow.
-            currentVolume = (0.99 * currentVolume + 0.01 * abs(sample));
+        if (sample > currentAvgVolume) { //Increase fast, fade slow.
+            currentAvgVolume = (0.99 * currentAvgVolume + 0.01 * abs(sample));
         } else {
-            currentVolume = (0.9999 * currentVolume + 0.0001 * abs(sample));
+            currentAvgVolume = (0.9997 * currentAvgVolume + 0.0003 * abs(sample));
         }
     }
     
+    
+    currentSmlVolume = (0.97 * currentSmlVolume + 0.03 * abs(sample));
+
+    
     //Pump the fade.
-    if (howBumpingIsIt) { SoundFadeDelayless(); }
-}
-
-void BandpassFilterBeat::writeAndDelay(unsigned int brightness, unsigned int ms) {
-  analogWrite(ledPin, 
-    min(255, brightness) * maxDutyCycle / 255);
-  next_blink = millis() + ms;
-}
-
-void BandpassFilterBeat::SoundFadeDelayless() {
-  if (millis() >= next_blink) {
     if (MODE == MODE_INSTANT) {
-      switch (howBumpingIsIt) {
-        case  2: writeAndDelay(255, 4); break;
-        case  1: writeAndDelay(  5, 0); break;
-      }
+        analogWrite(
+            ledPin, 
+            (beatAtMs+16 > millis()) * maxDutyCycle
+        );
     } else {
-      switch (howBumpingIsIt) {
-        case 27: writeAndDelay(255, 20/4); break;
-        case 26: writeAndDelay(250, 20/4); break;
-        case 25: writeAndDelay(240, 20/4); break;
-        case 24: writeAndDelay(230, 20/4); break;
-        case 23: writeAndDelay(220, 20/4); break;
-        case 22: writeAndDelay(210, 30/4); break;
-        case 21: writeAndDelay(200, 30/4); break;
-        case 20: writeAndDelay(190, 30/4); break;
-        case 19: writeAndDelay(180, 30/4); break;
-        case 18: writeAndDelay(170, 20/4); break;
-        case 17: writeAndDelay(160, 30/4); break;
-        case 16: writeAndDelay(150, 40/4); break;
-        case 15: writeAndDelay(140, 50/4); break;
-        case 14: writeAndDelay(130, 50/4); break;
-        case 13: writeAndDelay(120, 60/4); break;
-        case 12: writeAndDelay(110, 50/4); break;
-        case 11: writeAndDelay(100, 50/4); break;
-        case 10: writeAndDelay( 90, 50/4); break;
-        case  9: writeAndDelay( 80, 50/4); break;
-        case  8: writeAndDelay( 70, 30/4); break;
-        case  7: writeAndDelay( 60, 30/4); break;
-        case  6: writeAndDelay( 50, 30/4); break;
-        case  5: writeAndDelay( 40, 30/4); break;
-        case  4: writeAndDelay( 30, 30/4); break;
-        case  3: writeAndDelay( 20, 30/4); break;
-        case  2: writeAndDelay( 10, 30/4); break;
-        case  1: writeAndDelay(  0, 10/4); break;
-      }
+        const float maxSmlVolume = 30.f;
+        const float beatLightNormalized = 
+            1 - ( //Light defaults to off, not on.
+                + 0.95 * min( //95% of the light comes from 0..1 of the fade duration fade.
+                    (float)(millis() - beatAtMs) / fadeDuration,
+                    1
+                )
+                + 0.05 //Always keep the light on at 5%…
+            );
+        const float volumeLightNormalized = 
+            1-pow(1-( //Make it x³ more sensitive.
+                min(maxSmlVolume, 
+                    max(0, currentSmlVolume-3.5) //Compensate for noise floor a bit.
+                )/maxSmlVolume
+            ), 3);
+        
+        const float envelopeThresholdMax = (max(envelopeThreshold, currentAvgVolume*envelopeConfidenceFactor));
+        const float envelopeThresholdMin = envelopeThresholdMax - 10;
+        const float mixFactor = max(0.05, min(1, (envelopeAvg - envelopeThresholdMin) / (envelopeThresholdMax - envelopeThresholdMin)));
+        
+        //Serial.print(", s1 "), Serial.print((envelopeAvg - envelopeThresholdMin));
+        //Serial.print(", s2 "), Serial.print((envelopeThresholdMax - envelopeThresholdMin));
+        //Serial.print(", mixFactor "), Serial.print(mixFactor);
+        //Serial.println("");
+        
+        analogWrite(
+            ledPin,
+            (beatLightNormalized*(mixFactor) + volumeLightNormalized*(1-mixFactor)) * maxDutyCycle
+        );
     }
-    howBumpingIsIt--;
-  }
 }
